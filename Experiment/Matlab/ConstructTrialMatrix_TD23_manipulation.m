@@ -1,4 +1,4 @@
-function [trialmatrix] = ConstructTrialMatrix_TD23(chapter,ex_vectors_cur)
+function [trialmatrix] = ConstructTrialMatrix_TD23_manipulation(chapter,ex_vectors_cur)
 
 %% extract parameters of chapter
 
@@ -34,6 +34,7 @@ rewardcue_odor_duration = chapter.rewardcue_odor_duration(1, :);
 complete_session_vect = zeros(size(ex_vectors_cur,1),7);
 complete_session_vect(:,6)=ex_vectors_cur(:,3); 
 complete_session_vect(:,7)=ex_vectors_cur(:,4); 
+complete_session_vect(:,8)=ex_vectors_cur(:,5);
 
 %           set odorcue_odor numbers and odor_durations           
        for ix=1:size(ex_vectors_cur,1)
@@ -80,7 +81,7 @@ trialmatrix=complete_session_vect;
             
 %format to table
 
-trialmatrix=table(trialmatrix(:,1), trialmatrix(:,2), trialmatrix(:,3), trialmatrix(:,4), trialmatrix(:,5), trialmatrix(:,6), trialmatrix(:,7), 'VariableNames', {'odorcue_odor_num', 'odorcue_odor_dur', 'rewardcue_odor_num', 'rewardcue_odor_dur', 'rew_size', 'drop_or_not', 'trialtype'});
+trialmatrix=table(trialmatrix(:,1), trialmatrix(:,2), trialmatrix(:,3), trialmatrix(:,4), trialmatrix(:,5), trialmatrix(:,6), trialmatrix(:,7), trialmatrix(:,8), 'VariableNames', {'odorcue_odor_num', 'odorcue_odor_dur', 'rewardcue_odor_num', 'rewardcue_odor_dur', 'rew_size', 'drop_or_not', 'trialtype', 'inhibit_or_not'});
 
 end
 

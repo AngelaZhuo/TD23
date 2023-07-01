@@ -1,5 +1,5 @@
 
-function chapter = GetSessionParameters_TD22(scheme)
+function chapter = GetSessionParameters_TD23(scheme)
 
 switch scheme
     
@@ -160,33 +160,7 @@ switch scheme
         chapter.odorcue_odor_duration(1,1:length(chapter.odorcue_odors(1,:)))={1240 1240};        
         chapter.rewardcue_odor_duration(1,1:length(chapter.rewardcue_odors(1,:)))={1240 1240};  
         
-    case '2/3 MRI_TD_19'
-
-        odorcue_odors=[5 6];
-        rewardcue_odors=[7 8];
-
-        odor_prob=[0.8 0.2];        
-        rew_prob=[0.8 0.2]; 
-        chapter.case=scheme;
-        
-        chapter.max_trials=100;
-        chapter.reward_delay=1200;
-        chapter.lick_window=7500;
-        
-        
-        chapter.trials_until_end=chapter.max_trials;
-        
-        
-        chapter.odorcue_odors(1,:)=odorcue_odors;
-        chapter.rewardcue_odors(1,:)=rewardcue_odors;
-        chapter.odorcue_odor_freq(1,:)=[20 20];
-        chapter.rewardcue_odor_freq(1,:)=[20 20];
-        chapter.rew_prob(1,:)=rew_prob;
-        chapter.rew_sizes(1,1:length(chapter.rewardcue_odors(1,:)))={333 333};
-        chapter.odorcue_odor_duration(1,1:length(chapter.odorcue_odors(1,:)))={1240 1240};        
-        chapter.rewardcue_odor_duration(1,1:length(chapter.rewardcue_odors(1,:)))={1240 1240};  
-
-        
+           
     case '2/3 MRI_TD_19'
 
         odorcue_odors=[5 6];

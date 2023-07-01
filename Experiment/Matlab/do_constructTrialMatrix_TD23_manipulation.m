@@ -1,4 +1,4 @@
-function [chapter, trialmatrix, ex_vectors_cur] = do_constructTrialMatrix_TD23(phase)%,JitterButton)
+function [chapter, trialmatrix, ex_vectors_cur] = do_constructTrialMatrix_TD23_manipulation(phase)%,JitterButton)
         
 
         
@@ -7,7 +7,7 @@ function [chapter, trialmatrix, ex_vectors_cur] = do_constructTrialMatrix_TD23(p
 %         if strfind(JitterButton,'JitterOn') == 1 
 %         %load('C:\Users\Anwender\Desktop\ExperimentalControl\MRTprediction\experiments_jittered.mat'); % experiments.mat
 %         else
-        load('\\zisvfs12\Home\yi.zhuo\Documents\GitHub\TD23\Experiment\Matlab\experiments'); % experiments.mat -> max4consec max 4 trialpaths in a row
+        load('\\zisvfs12\Home\yi.zhuo\Documents\GitHub\TD23\Experiment\Matlab\experiments_manipulation.mat'); % experiments.mat -> max4consec max 4 trialpaths in a row
 %         % end
 %         %matching with MRI 21thJan 2020
 %         ChosenVec = 189;
@@ -15,11 +15,11 @@ function [chapter, trialmatrix, ex_vectors_cur] = do_constructTrialMatrix_TD23(p
        % choose vectors randomly
         random=rand(1);
         if random>0.5
-           ChosenVec=ceil(rand(1)*200);
+           ChosenVec=ceil(rand(1)*101);
         else
-           ChosenVec=floor(rand(1)*200);
+           ChosenVec=floor(rand(1)*101);
         end
-        ex_vectors_cur= experiments(:,:,ChosenVec);
+        ex_vectors_cur= experiments_manipulation(:,:,ChosenVec);
 %        %The experiment.mat contains randomized session information. Each row represents one trial, the first number is the odorcue_odor, the second number
 %       is the rewardcue_odor, the third number is the presence of reward and the forth number is the trial type (8 types in total)       
 
@@ -76,7 +76,7 @@ function [chapter, trialmatrix, ex_vectors_cur] = do_constructTrialMatrix_TD23(p
        
        %% create trialmatrix 
       
-       [trialmatrix] = ConstructTrialMatrix_TD23(chapter,ex_vectors_cur);
+       [trialmatrix] = ConstructTrialMatrix_TD23_manipulation(chapter,ex_vectors_cur);
    
 
        chapter.NumberExpVectors=ChosenVec;

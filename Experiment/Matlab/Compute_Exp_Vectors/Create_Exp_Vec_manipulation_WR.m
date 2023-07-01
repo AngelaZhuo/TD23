@@ -65,10 +65,10 @@ for s = 1:size(TM,1) % For every different Trial Matrix of 150 trials
     end
     if Iterate_4 == 0
         Inh(s, :) = Iner;
-        n = n+1
+        n = n+1;
     end
     Maxer(s) = it;
-    s
+    s;
 end
 
 figure
@@ -109,11 +109,12 @@ for s = 1:Sessions
 %             error("You are not inhibiting the right amount of trial type " + ty + " in session " + s)
 %         end
     end
-    "Session " + s + " is correct :)" 
+    "Session " + s + " is correct :)"; 
 end
 
 
-save("\\zisvfs12\Home\Yi.Zhuo\Documents\GitHub\TD23\Experiment\Matlab\experiments_manipulation.mat", "experiments_manipulation")
+save("\\zisvfs12\Home\Yi.Zhuo\Documents\GitHub\TD23\Experiment\Matlab\experiments_manipulation.mat", "experiments_manipulation") 
+%the output is saved as experiments_manipulation_WR
 
 
 
