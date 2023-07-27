@@ -8,6 +8,7 @@ function superflex_TD23_PMC_tagging(phase, animals, COMPort)
 %% create header-file, open serial connection to olfactometer.
 
 %"animals" input in superflex_TD23_PMC() needs to be written in a cell array of two strings such as {'x01' 'x02'}
+% phase is 'TD23_PMC'
 
 fname={};
 if size(animals,2)<2

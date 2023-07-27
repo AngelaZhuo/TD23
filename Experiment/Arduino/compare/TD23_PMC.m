@@ -1,3 +1,5 @@
+TD23_PMC 
+
 #include <SPI.h> //Serial Peripheral Interface to manipulate periphal devices
 #include <Wire.h> // allows you to communicate with I2C / TWI (two wire interfaces) devices
 //inkludiert weittere libraries
@@ -42,7 +44,6 @@
 
 
 #define OptBlueTrig  67 //
-#define ShamBlueTrig  68 //
 #define LickPin 556 //
 #define TrialTrig 557 // not used
 #define LaserTrig2 559 // not used
@@ -218,7 +219,6 @@ void setup() {
   pinMode(FVTrig, OUTPUT);
   pinMode(OptRedTrig, OUTPUT);
   pinMode(OptBlueTrig, OUTPUT);
-  pinMode(ShamBlueTrig, OUTPUT);
   pinMode(LEDtrig, OUTPUT);
   pinMode(TrialTrig, OUTPUT);
   
@@ -228,7 +228,6 @@ void setup() {
   digitalWrite(Pump2Trig, LOW);
   digitalWrite(OptRedTrig, LOW);
   digitalWrite(OptBlueTrig, LOW);
-  digitalWrite(ShamBlueTrig, LOW);
   digitalWrite(LEDtrig, LOW);
   digitalWrite(TrialTrig, LOW);
  
@@ -472,16 +471,16 @@ void loop()
            digitalWrite(LEDtrig,HIGH);
            state = 0;}
            
-     //ShamBlueTrig test, turn on for 2 sec
-          if (strcmp(argv[0], "lt7") == 0) {
-            laser_pattern = 7; //
-            laser_lat = 0;
-            delay (1);
+     // test Laser 1: 10x1s pulses + 2min on  
+           if (strcmp(argv[0], "lt7") == 0) {
+   
+           laser_pattern = 101;
+           laser_lat = 0;
+           delay (1);
             startTime = millis();
             Serial.println("startTime");
             Serial.println (startTime);
-            state = 100;
-          }    
+           state = 100;}    
           
     // test Laser 2: 10x1s pulses + 2min on  
            if (strcmp(argv[0], "lt8") == 0) {
@@ -964,12 +963,6 @@ case 100:
           }
         }
 
-        if (laser_pattern == 7) {        //ShamBlueTrig turns on
-            digitalWrite(ShamBlueTrig, HIGH);
-            delay(2000);
-            digitalWrite(ShamBlueTrig, LOW);
-          }
-
 
 //        old case 405, used until 27thFeb2020 
 //        if (laser_pattern == 6) {        //MSN tagging 1s, 40Hz, 12,5 ms pulse 
@@ -985,7 +978,16 @@ case 100:
 //        
                        
 
-          if (laser_pattern == 8) {        //MSN tagging 6 pulse, 10 Hz, 5ms 
+        if (laser_pattern == 7) {        //MSN tagging 6 pulse, 40 Hz, 5ms 
+          for (int xi=0; xi < 6; xi++){
+          digitalWrite(LaserTrig2, HIGH);
+          delayMicroseconds(5000);
+          digitalWrite(LaserTrig2, LOW);
+          delay(20);
+          }
+        }
+
+        if (laser_pattern == 8) {        //MSN tagging 6 pulse, 10 Hz, 5ms 
           for (int xi=0; xi < 6; xi++){
           digitalWrite(LaserTrig2, HIGH);
           delayMicroseconds(5000);

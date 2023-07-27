@@ -7,7 +7,7 @@ function [chapter, trialmatrix, ex_vectors_cur] = do_constructTrialMatrix_TD23_m
 %         if strfind(JitterButton,'JitterOn') == 1 
 %         %load('C:\Users\Anwender\Desktop\ExperimentalControl\MRTprediction\experiments_jittered.mat'); % experiments.mat
 %         else
-        load('\\zisvfs12\Home\yi.zhuo\Documents\GitHub\TD23\Experiment\Matlab\experiments_manipulation.mat'); % experiments.mat -> max4consec max 4 trialpaths in a row
+        load('D:\TD23\Scripts\Matlab\experiments_manipulation.mat'); % experiments.mat -> max4consec max 4 trialpaths in a row
 %         % end
 %         %matching with MRI 21thJan 2020
 %         ChosenVec = 189;

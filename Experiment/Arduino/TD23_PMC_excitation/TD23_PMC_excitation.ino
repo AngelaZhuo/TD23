@@ -41,6 +41,7 @@
 #define OptRedTrig  66 //activate Bipoles, red LEDs
 #define OptBlueTrig  67 //inhibit Bipoles, blue lasers
 #define ShamBlueTrig 68
+#define ShamRedTrig 69 
 
 #define LickPin 556 //
 #define TrialTrig 557 // not used
@@ -220,6 +221,7 @@ void setup() {
   pinMode(OptRedTrig, OUTPUT);
   pinMode(OptBlueTrig, OUTPUT);
   pinMode(ShamBlueTrig, OUTPUT);
+  pinMode(ShamRedTrig, OUTPUT);
   pinMode(LEDtrig, OUTPUT);
   pinMode(TrialTrig, OUTPUT);
 
@@ -230,6 +232,7 @@ void setup() {
   digitalWrite(OptRedTrig, LOW);
   digitalWrite(OptBlueTrig, LOW);
   digitalWrite(ShamBlueTrig, LOW);
+  digitalWrite(ShamRedTrig, LOW);
   digitalWrite(LEDtrig, LOW);
   digitalWrite(TrialTrig, LOW);
 
@@ -509,25 +512,34 @@ void loop()
             state = 100;
           }
 
-          // test LED
-          if (strcmp(argv[0], "led") == 0) {
-            digitalWrite(LEDtrig, HIGH);
-            delay(1000);
-            digitalWrite(LEDtrig, LOW);
-            state = 0;
-          }
-
-
-          // test Laser 2: 10x1s pulses + 2min on
+          //OptRedTrig test, 20Hz 10 pulses
           if (strcmp(argv[0], "lt8") == 0) {
-
-            laser_pattern = 102;
+            laser_pattern = 8; //
             laser_lat = 0;
             delay (1);
             startTime = millis();
             Serial.println("startTime");
             Serial.println (startTime);
             state = 100;
+          }
+
+          //ShamRedTrig test, 20Hz 10 pulses
+          if (strcmp(argv[0], "lt9") == 0) {
+            laser_pattern = 9; //
+            laser_lat = 0;
+            delay (1);
+            startTime = millis();
+            Serial.println("startTime");
+            Serial.println (startTime);
+            state = 100;
+          }
+
+          // test LED
+          if (strcmp(argv[0], "led") == 0) {
+            digitalWrite(LEDtrig, HIGH);
+            delay(1000);
+            digitalWrite(LEDtrig, LOW);
+            state = 0;
           }
 
           //test vial 9 with laser
@@ -1120,14 +1132,22 @@ void loop()
             delay(2000);
             digitalWrite(ShamBlueTrig, LOW);
           }
-        
 
-        if (laser_pattern == 9) {        //MSN tagging 10 pulse, 40 Hz, 5ms
+        if (laser_pattern == 8) {        //OptRedTrig 20Hz, 10 pulses, 10ms
           for (int xi = 0; xi < 10; xi++) {
             digitalWrite(OptRedTrig, HIGH);
-            delayMicroseconds(5000);
+            delay(10);
             digitalWrite(OptRedTrig, LOW);
-            delay(20);
+            delay(45);
+          }
+        }
+
+        if (laser_pattern == 9) {        //ShamRedTrig 20Hz, 10 pulse, 10ms
+          for (int xi = 0; xi < 10; xi++) {
+            digitalWrite(ShamRedTrig, HIGH);
+            delay(10);
+            digitalWrite(ShamRedTrig, LOW);
+            delay(45);
           }
         }
         if (laser_pattern == 11) {        //MSN tagging 10 pulse, 10 Hz, 5ms
@@ -1158,15 +1178,6 @@ void loop()
         //
 
 
-        if (laser_pattern == 8) {        //MSN tagging 6 pulse, 10 Hz, 5ms
-          for (int xi = 0; xi < 6; xi++) {
-            digitalWrite(LaserTrig2, HIGH);
-            delayMicroseconds(5000);
-            digitalWrite(LaserTrig2, LOW);
-            delayMicroseconds(5000);
-            delay(90);
-          }
-        }
         if (laser_pattern == 10) {        //MSN tagging 10 pulse, 40 Hz, 5ms
           for (int xi = 0; xi < 10; xi++) {
             digitalWrite(LaserTrig2, HIGH);
