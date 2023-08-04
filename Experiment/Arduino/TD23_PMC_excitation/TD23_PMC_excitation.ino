@@ -40,8 +40,8 @@
 #define LEDtrig 62
 #define OptRedTrig  66 //activate Bipoles, red LEDs
 #define OptBlueTrig  67 //inhibit Bipoles, blue lasers
-#define ShamBlueTrig 68
-#define ShamRedTrig 69 
+#define ShamBlueTrig 68 //blue LED for sham control
+#define ShamRedTrig 69 //red laser for sham control
 
 #define LickPin 556 //
 #define TrialTrig 557 // not used
@@ -83,8 +83,9 @@ int reward_delay;
 int reward_size;
 int reward_size2 = 333; //333 default; 100 for Ephys
 int lick_window;
-int silence_period; //1 is CS1, 2 is CS1 delday, 3 is CS2, 4 is CS2 delay
-int inhibit_or_not;
+//int silence_period; //1 is CS1, 2 is CS1 delday, 3 is CS2, 4 is CS2 delay
+int excite_or_not;
+//int inhibit_or_not;
 //int lick_delay, discovery_help;
 
 //the four variables for StageOne
@@ -307,8 +308,39 @@ void loop()
           //            state = 1;
           //          }
 
-          //PMC paradigm with silencing at specific time point
-          if (strcmp(argv[0], "trialParams4") == 0) {
+//          //PMC paradigm with silencing at specific time point
+//          if (strcmp(argv[0], "trialParams4") == 0) {
+//            // == 0 means strings are equal
+//
+//            odorcue_odor_dur = 1240;
+//            rewardcue_odor_dur = 1240;
+//            odorcue_odor_num   = (int)atoi(argv[1]); //atoi: string/ascii zu Int;
+//            rewardcue_odor_num   = (int)atoi(argv[2]);
+//            drop_or_not = (int)atoi(argv[3]);
+//            reward_active = drop_or_not;
+//            reward_delay = (int)atoi(argv[4]);
+//            reward_size = 333; //(int)atoi(argv[5]);
+//            silence_period = (int)atoi(argv[5]); //silence either at CS1, CS2, CS1 delay or CS2 delay
+//            inhibit_or_not = (int)atoi(argv[6]);
+//            //odorcue_odor_dur = (int)atoi(argv[6]);
+//            //rewardcue_odor_dur = (int)atoi(argv[7]);
+//            lick_window = 7500;
+//
+//            odorON = false;
+//            dropON = false;
+//            lickON = false;
+//            DropDelivered = false;
+//            odorcue_OdorDelivered = false;
+//            rewardcue_OdorDelivered = false;
+//
+//            startTime = millis();
+//            Serial.println(startTime);
+//            Serial.println ("startTime");
+//            state = 1;
+//          }
+
+          //PMC paradigm with excitation at either odor A or B (CS1)
+          if (strcmp(argv[0], "trialParams5") == 0) {
             // == 0 means strings are equal
 
             odorcue_odor_dur = 1240;
@@ -319,8 +351,7 @@ void loop()
             reward_active = drop_or_not;
             reward_delay = (int)atoi(argv[4]);
             reward_size = 333; //(int)atoi(argv[5]);
-            silence_period = (int)atoi(argv[5]); //silence either at CS1, CS2, CS1 delay or CS2 delay
-            inhibit_or_not = (int)atoi(argv[6]);
+            excite_or_not = (int)atoi(argv[5]);
             //odorcue_odor_dur = (int)atoi(argv[6]);
             //rewardcue_odor_dur = (int)atoi(argv[7]);
             lick_window = 7500;
@@ -772,29 +803,31 @@ void loop()
       break;
 
 
-    case 3: // perceived odorcue_OdorOnTime + Optogenetic inhibition/sham start
+    case 3: // perceived odorcue_OdorOnTime + Optogenetic excitation/sham start
       currentTime = millis();
       if (odorON && (currentTime - odorcue_OdorOnTime > odor_lat_On)) {
-        if (silence_period == 1) {
-          if (inhibit_or_not == 1) {
-            perc_odorcue_OdorOnTime = millis();
-            Serial.println ("perc_odorcueOn + OptBlue_On");
-            Serial.println(perc_odorcue_OdorOnTime);
-            digitalWrite(OptBlueTrig, HIGH);
-            state = 4;
+        if (excite_or_not == 1) {
+          perc_odorcue_OdorOnTime = millis();
+          Serial.println ("perc_odorcueOn + OptBlue_On");
+          Serial.println(perc_odorcue_OdorOnTime);
+          for (int xi = 0; xi < 10; xi++) {
+            digitalWrite(OptRedTrig, HIGH);
+            delay(10);
+            digitalWrite(OptRedTrig, LOW);
+            delay(45);
           }
-          else {
-            perc_odorcue_OdorOnTime = millis();
-            Serial.println ("perc_odorcueOn + ShamBlue_On");
-            Serial.println(perc_odorcue_OdorOnTime);
-            digitalWrite(ShamBlueTrig, HIGH);
-            state = 4;
-          }
+          state = 4;
         }
         else {
           perc_odorcue_OdorOnTime = millis();
-          Serial.println ("perc_odorcueOn");
+          Serial.println ("perc_odorcueOn + ShamBlue_On");
           Serial.println(perc_odorcue_OdorOnTime);
+          for (int xi = 0; xi < 10; xi++) {
+            digitalWrite(ShamRedTrig, HIGH);
+            delay(10);
+            digitalWrite(ShamRedTrig, LOW);
+            delay(45);
+          }
           state = 4;
         }
       }
@@ -811,44 +844,16 @@ void loop()
       }
       break;
 
-    case 5: // perceived odorcue_OdorOffTime + Optogenetic inhibition/sham end or start
-      currentTime = millis();
-      if  (!odorON && (currentTime - odorcue_OdorOffTime > odor_lat_Off) && silence_period == 1 && inhibit_or_not == 1) {
-        perc_odorcue_OdorOffTime = millis();
-        Serial.println("perc_odorcue_OdorOff + OptBlue_Off");
-        Serial.println(perc_odorcue_OdorOffTime);
-        digitalWrite(OptBlueTrig, LOW);
-        //jitter= random(0,1001);
-        //Serial.println("jitter");
-        //Serial.println(jitter);
-        state = 6;
-      }
-      else if (!odorON && (currentTime - odorcue_OdorOffTime > odor_lat_Off) && silence_period == 1 && inhibit_or_not == 0) {
-        perc_odorcue_OdorOffTime = millis();
-        Serial.println("perc_odorcue_OdorOff + ShamBlue_Off");
-        Serial.println(perc_odorcue_OdorOffTime);
-        digitalWrite(ShamBlueTrig, LOW);
-        state = 6;
-      }
-      else if (!odorON && (currentTime - odorcue_OdorOffTime > odor_lat_Off) && silence_period == 2 && inhibit_or_not == 1) {
-        perc_odorcue_OdorOffTime = millis();
-        Serial.println("perc_odorcue_OdorOff + OptBlue_On");
-        Serial.println(perc_odorcue_OdorOffTime);
-        digitalWrite(OptBlueTrig, HIGH);
-        state = 6;
-      }
-      else if (!odorON && (currentTime - odorcue_OdorOffTime > odor_lat_Off) && silence_period == 2 && inhibit_or_not == 0) {
-        perc_odorcue_OdorOffTime = millis();
-        Serial.println("perc_odorcue_OdorOff + OptBlue_On");
-        Serial.println(perc_odorcue_OdorOffTime);
-        digitalWrite(ShamBlueTrig, HIGH);
-        state = 6;
-      }
-      else if (!odorON && (currentTime - odorcue_OdorOffTime > odor_lat_Off)) {
-        perc_odorcue_OdorOffTime = millis();
-        Serial.println("perc_odorcue_OdorOff");
-        Serial.println(perc_odorcue_OdorOffTime);
-        state = 6;
+    case 5: // perceived odorcue_OdorOffTime
+        currentTime = millis();
+        if  (!odorON &&(currentTime - odorcue_OdorOffTime > odor_lat_Off)) {        
+          perc_odorcue_OdorOffTime = millis();
+          Serial.println("perc_odorcue_OdorOff"); 
+          Serial.println(perc_odorcue_OdorOffTime);
+          //jitter= random(0,1001);
+          //Serial.println("jitter");
+          //Serial.println(jitter);
+          state = 6;
       }
       break;
 
@@ -881,41 +886,13 @@ void loop()
       }
       break;
 
-    case 8: // perceived rewardcue_OdorOnTime + Optogenetic inhibition/sham end or start
-      currentTime = millis();
-      if  (odorON && (currentTime - rewardcue_OdorOnTime > odor_lat_On) && silence_period == 3 && inhibit_or_not == 1) {
-        perc_rewardcue_OdorOnTime = millis();
-        Serial.println("perc_rewardcue_OdorOn + OptBlue_On");
-        Serial.println(perc_rewardcue_OdorOnTime);
-        digitalWrite(OptBlueTrig, HIGH);
-        state = 9;
-      }
-      else if  (odorON && (currentTime - rewardcue_OdorOnTime > odor_lat_On) && silence_period == 3 && inhibit_or_not == 0) {
-        perc_rewardcue_OdorOnTime = millis();
-        Serial.println("perc_rewardcue_OdorOn + ShamBlue_On");
-        Serial.println(perc_rewardcue_OdorOnTime);
-        digitalWrite(ShamBlueTrig, HIGH);
-        state = 9;
-      }
-      else if  (odorON && (currentTime - rewardcue_OdorOnTime > odor_lat_On) && silence_period == 2 && inhibit_or_not == 1) {
-        perc_rewardcue_OdorOnTime = millis();
-        Serial.println("perc_rewardcue_OdorOn + OptBlue_Off");
-        Serial.println(perc_rewardcue_OdorOnTime);
-        digitalWrite(OptBlueTrig, LOW);
-        state = 9;
-      }
-      else if  (odorON && (currentTime - rewardcue_OdorOnTime > odor_lat_On) && silence_period == 2 && inhibit_or_not == 0) {
-        perc_rewardcue_OdorOnTime = millis();
-        Serial.println("perc_rewardcue_OdorOn + ShamBlue_Off");
-        Serial.println(perc_rewardcue_OdorOnTime);
-        digitalWrite(ShamBlueTrig, LOW);
-        state = 9;
-      }
-      else if (odorON && (currentTime - rewardcue_OdorOnTime > odor_lat_On)) {
-        perc_rewardcue_OdorOnTime = millis();
-        Serial.println("perc_rewardcue_OdorOn");
-        Serial.println(perc_rewardcue_OdorOnTime);
-        state = 9;
+    case 8: // perceived rewardcue_OdorOnTime
+        currentTime = millis();
+        if  (odorON &&(currentTime - rewardcue_OdorOnTime > odor_lat_On)) {        
+          perc_rewardcue_OdorOnTime = millis();
+          Serial.println("perc_rewardcue_OdorOn");
+          Serial.println(perc_rewardcue_OdorOnTime);
+          state = 9;
       }
       break;
 
@@ -933,43 +910,15 @@ void loop()
       break;
 
 
-    case 10: // perceived rewardcue_OdorOffTime + Optogenetic inhibition/sham end or start
-      currentTime = millis();
-      if  (!odorON && (currentTime - rewardcue_OdorOffTime > odor_lat_Off) && silence_period == 3 && inhibit_or_not == 1) {
-        perc_rewardcue_OdorOffTime = millis();
-        Serial.println("perc_rewardcue_OdorOff");
-        Serial.println(perc_rewardcue_OdorOffTime);
-        digitalWrite(OptBlueTrig, LOW);
-        state = 11;
+    case 10: // perceived rewardcue_OdorOffTime
+        currentTime = millis();
+        if  (!odorON &&(currentTime - rewardcue_OdorOffTime > odor_lat_Off)) {        
+          perc_rewardcue_OdorOffTime = millis();
+          Serial.println("perc_rewardcue_OdorOff");
+          Serial.println(perc_rewardcue_OdorOffTime);
+          state = 11;
       }
-      else if  (!odorON && (currentTime - rewardcue_OdorOffTime > odor_lat_Off) && silence_period == 3 && inhibit_or_not == 0) {
-        perc_rewardcue_OdorOffTime = millis();
-        Serial.println("perc_rewardcue_OdorOff");
-        Serial.println(perc_rewardcue_OdorOffTime);
-        digitalWrite(ShamBlueTrig, LOW);
-        state = 11;
-      }
-      else if  (!odorON && (currentTime - rewardcue_OdorOffTime > odor_lat_Off) && silence_period == 4 && inhibit_or_not == 1) {
-        perc_rewardcue_OdorOffTime = millis();
-        Serial.println("perc_rewardcue_OdorOff");
-        Serial.println(perc_rewardcue_OdorOffTime);
-        digitalWrite(OptBlueTrig, HIGH);
-        state = 11;
-      }
-      else if  (!odorON && (currentTime - rewardcue_OdorOffTime > odor_lat_Off) && silence_period == 4 && inhibit_or_not == 0) {
-        perc_rewardcue_OdorOffTime = millis();
-        Serial.println("perc_rewardcue_OdorOff");
-        Serial.println(perc_rewardcue_OdorOffTime);
-        digitalWrite(ShamBlueTrig, HIGH);
-        state = 11;
-      }
-      else if (!odorON && (currentTime - rewardcue_OdorOffTime > odor_lat_Off)) {
-        perc_rewardcue_OdorOffTime = millis();
-        Serial.println("perc_rewardcue_OdorOff");
-        Serial.println(perc_rewardcue_OdorOffTime);
-        state = 11;
-      }
-      break;
+      break;  
 
     case 11: //Drop or not
       currentTime = millis();
@@ -977,60 +926,25 @@ void loop()
 
 
       // for open false faucet
-      if (drop_or_not == 0 && (currentTime - perc_rewardcue_OdorOffTime > reward_delay - drop_lat) && silence_period == 4 && inhibit_or_not == 1)
-      {
-        DropOnTimefake = millis();
-        Serial.println ("Dropfake");
-        Serial.println (DropOnTimefake);
-        digitalWrite(OptBlueTrig, LOW);
-        digitalWrite(DIGITAL3, HIGH);
-        delay(reward_size2);
-        digitalWrite(DIGITAL3, LOW);
-        state = 12;
-      }
-
-      else if (drop_or_not == 0 && (currentTime - perc_rewardcue_OdorOffTime > reward_delay - drop_lat) && silence_period == 4 && inhibit_or_not == 0)
-      {
-        DropOnTimefake = millis();
-        Serial.println ("Dropfake");
-        Serial.println (DropOnTimefake);
-        digitalWrite(ShamBlueTrig, LOW);
-        digitalWrite(DIGITAL3, HIGH);
-        delay(reward_size2);
-        digitalWrite(DIGITAL3, LOW);
-        state = 12;
-      }
-
-      else if (drop_or_not == 1 && (currentTime - perc_rewardcue_OdorOffTime > reward_delay - drop_lat) && silence_period == 4 && inhibit_or_not == 1) {
-        Serial.println ("Drop");
-        digitalWrite(OptBlueTrig, LOW);
-        OpenFaucet();
-        state = 12;
-      }
-
-      else if (drop_or_not == 1 && (currentTime - perc_rewardcue_OdorOffTime > reward_delay - drop_lat) && silence_period == 4 && inhibit_or_not == 0) {
-        Serial.println ("Drop");
-        digitalWrite(ShamBlueTrig, LOW);
-        OpenFaucet();
-        state = 12;
-      }
-
-      else if (drop_or_not == 0 && (currentTime - perc_rewardcue_OdorOffTime > reward_delay - drop_lat))  {
+     if (drop_or_not == 0 && (currentTime - perc_rewardcue_OdorOffTime > reward_delay - drop_lat))  
+     {
+       
         DropOnTimefake = millis();
         Serial.println ("Dropfake");
         Serial.println (DropOnTimefake);
         digitalWrite(DIGITAL3, HIGH);
         delay(reward_size2);
         digitalWrite(DIGITAL3, LOW);
-        state = 12;
-      }
+     state = 12; 
+     }
 
-      else if (drop_or_not == 1 && (currentTime - perc_rewardcue_OdorOffTime > reward_delay - drop_lat)) {
+        if (drop_or_not == 1 && (currentTime - perc_rewardcue_OdorOffTime > reward_delay - drop_lat)) {       
         Serial.println ("Drop");
-        OpenFaucet();
-        state = 12;
+        OpenFaucet();                
+      state = 12;
       }
       break;
+
 
     case 12: //perc_drop
       currentTime = millis();
