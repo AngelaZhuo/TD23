@@ -40,8 +40,8 @@
 #define LEDtrig 62
 #define OptRedTrig  66 //activate Bipoles, red LEDs
 #define OptBlueTrig  67 //inhibit Bipoles, blue lasers
-#define ShamBlueTrig 68 //blue LED for sham control
-#define ShamRedTrig 69 //red laser for sham control
+//#define ShamBlueTrig 68 //blue LED for sham control
+#define ShamRedTrig 68 //red laser for sham control
 
 #define LickPin 556 //
 #define TrialTrig 557 // not used
@@ -221,7 +221,7 @@ void setup() {
   pinMode(FVTrig, OUTPUT);
   pinMode(OptRedTrig, OUTPUT);
   pinMode(OptBlueTrig, OUTPUT);
-  pinMode(ShamBlueTrig, OUTPUT);
+//  pinMode(ShamBlueTrig, OUTPUT);
   pinMode(ShamRedTrig, OUTPUT);
   pinMode(LEDtrig, OUTPUT);
   pinMode(TrialTrig, OUTPUT);
@@ -232,7 +232,7 @@ void setup() {
   digitalWrite(Pump2Trig, LOW);
   digitalWrite(OptRedTrig, LOW);
   digitalWrite(OptBlueTrig, LOW);
-  digitalWrite(ShamBlueTrig, LOW);
+//  digitalWrite(ShamBlueTrig, LOW);
   digitalWrite(ShamRedTrig, LOW);
   digitalWrite(LEDtrig, LOW);
   digitalWrite(TrialTrig, LOW);
@@ -810,6 +810,7 @@ void loop()
           perc_odorcue_OdorOnTime = millis();
           Serial.println ("perc_odorcueOn + OptBlue_On");
           Serial.println(perc_odorcue_OdorOnTime);
+          delay(100);
           for (int xi = 0; xi < 10; xi++) {
             digitalWrite(OptRedTrig, HIGH);
             delay(10);
@@ -822,6 +823,7 @@ void loop()
           perc_odorcue_OdorOnTime = millis();
           Serial.println ("perc_odorcueOn + ShamBlue_On");
           Serial.println(perc_odorcue_OdorOnTime);
+          delay(100);
           for (int xi = 0; xi < 10; xi++) {
             digitalWrite(ShamRedTrig, HIGH);
             delay(10);
@@ -1042,9 +1044,9 @@ void loop()
         }
 
         if (laser_pattern == 7) {        //ShamBlueTrig turns on for 2 s
-            digitalWrite(ShamBlueTrig, HIGH);
+            digitalWrite(ShamRedTrig, HIGH);
             delay(2000);
-            digitalWrite(ShamBlueTrig, LOW);
+            digitalWrite(ShamRedTrig, LOW);
           }
 
         if (laser_pattern == 8) {        //OptRedTrig 20Hz, 10 pulses, 10ms
