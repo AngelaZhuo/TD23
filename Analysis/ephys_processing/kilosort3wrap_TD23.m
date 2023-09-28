@@ -1,32 +1,27 @@
-function kilosort3wrap_TD23(soi)
+function kilosort3wrap_TD23
 %modified from kilosort3wrap_TD19
 %function rez_post = kilosort3wrap_TD19(data_dir,animal,clst,mapStr)
 % list sessions to process, exclude those already processed  if ~recompute
 % warning('Only temp file will be created, take out return in l.185 (kilosort3wrap_TD19.m) if you want to run the whole script')
-
+clear
+soi = [];
 recompute = 0; %1 means overwriting the session that's been processed
 clst = [8, 6, 4]; %1st value is ops.Th (1st threshold), 2nd value is 2nd threshold, 3rd value is how many channels KS use to detect spike 
-database = '/zi-flstorage/data/Angela/DATA/TD23/KS3';
-clstStre = ['thr' num2str(clst(1)) '-' num2str(clst(2)) '_lam20_ch' num2str(clst(3)) '_NT160064'];
+database = '/zi-flstorage/data/Angela/DATA/TD23/KS3/20230626_PMC_tagging'; %only process one session for the time being
+clstStr = ['thr' num2str(clst(1)) '-' num2str(clst(2)) '_lam20_ch' num2str(clst(3)) '_NT160064'];
 mapStr ='';
 logDir = [database filesep 'log' filesep];
 if ~isfolder(logDir)
     mkdir(logDir)
 end
 
-if ~isempty(mapStr)
-    warning(['output saved in folder ' mapStr])
-else
-    warning('Channelmaps with broke channels!')
-end
-pthPre =getPre(1);pthPre = pthPre{2};
-
-% if ispc
-%     pthPre = 'W:\group_entwbio\data\Mirko\';
-% elseif isunix
-%     pthPre = '/zi-flstorage/data/Mirko/';
+% if ~isempty(mapStr)
+%     warning(['output saved in folder ' mapStr])
+% else
+%     warning('Channelmaps with broke channels!')
 % end
-
+pthPre = '/home/yi.zhuo/Documents/';
+% pthPre =getPre(1);pthPre = pthPre{2};
 
 
 if isempty(soi)
@@ -66,8 +61,8 @@ while ~isempty(dirlist)
     for dx=1:length(dirlist)
         
         df = getAllFiles([dirlist(dx).folder filesep dirlist(dx).name],'*.dat',0);
-        lfpf = getAllFiles([dirlist(dx).folder filesep dirlist(dx).name],'*lfp.mat',0);
-        if ~isempty(df) && ~isempty(lfpf)
+%         lfpf = getAllFiles([dirlist(dx).folder filesep dirlist(dx).name],'*lfp.mat',0);
+        if ~isempty(df)
             dirlist(dx).hasdat = true;
         else
             dirlist(dx).hasdat = false;
@@ -149,17 +144,17 @@ animal = rootZ(ffs(end)+1:f_(end-1)-1);
 if ~isfolder(rootH)
     mkdir(rootH);
 end
-pathToChanMap= [pthPre 'GitHub' filesep 'DataProcessing-ephys' filesep 'KS2 batch' filesep 'configFiles_for_KS2'];
-pathToYourConfigFile =  [pthPre 'GitHub' filesep 'KS3_Pipeline' filesep 'KilosortConfig']; % take from Github folder and put it somewhere else (together with the master_file)
+% pathToChanMap= [pthPre 'GitHub' filesep 'DataProcessing-ephys' filesep 'KS2 batch' filesep 'configFiles_for_KS2'];
+pathToYourConfigFile =  [pthPre 'github' filesep 'KS3_Pipeline' filesep 'KilosortConfig']; % take from Github folder and put it somewhere else (together with the master_file)
 
 %%  compute KS chanmap
 % conversion from Max used until animal specific channelmaps are
 % created
-channelmapfile = [pthPre 'GitHub' filesep 'DataProcessing-ephys' filesep 'channel_maps_for_RhdToDat' filesep 'maps.mat'];
+channelmapfile = [pthPre 'github' filesep 'TD23' filesep 'Analysis' filesep 'ephys_processing' filesep 'ChannelMapAZ.mat'];
 maps = load(channelmapfile);
-maps = maps.maps;
-date = str2double(dirlist(ses).name(end-12:end-7));
-time = str2double(dirlist(ses).name(end-5:end));
+% maps = maps.maps;
+% date = str2double(dirlist(ses).name(end-12:end-7));
+% time = str2double(dirlist(ses).name(end-5:end));
 % mapStrRHD2DAT = getMapstrRHD2DAT(animal,date,[dirlist(ses).folder filesep dirlist(ses).name],time);
 chanMap = ChanMapConvert(maps.(animal).array_map,maps.(animal).region,animal);
 
@@ -216,7 +211,7 @@ rez                = datashift2(rezraw, 0);
 
 rez_template                = template_learning(rez_spikes, tF, st3);
 
-[rez_sorted, st3, tF, fW, spikeAmps]     = trackAndSort(rez_template);
+[rez_sorted, st3, tF, ~, spikeAmps]     = trackAndSort(rez_template);
 
 rez_clustered               = final_clustering(rez_sorted, tF, st3);
 
@@ -224,7 +219,7 @@ rez_final                = find_merges(rez_clustered, 1);
 
 rez_final = ContaminationPercent(rez_final, 2); % refractory period in ms
 %%
-[rez_post, spikeAmps_post]  = precuration(rez_final, tF, spikeAmps);
+[rez_post, ~]  = precuration(rez_final, tF, spikeAmps);
 rez_post = find_merges(rez_post,1);
 rez_post = reset_clust_ids(rez_post);
 rez_post = ContaminationPercent(rez_post, 2); % refractory period in ms

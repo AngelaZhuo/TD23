@@ -167,7 +167,7 @@ for session=1:numel(session_bundle)
         
         
     end
-    %save([ident '_lfp.mat'], 'lfpchannels', '-v7');
+    %save([ident '_lfp.mat'], 'lfpchannels', '-v7');  Did not process lfp data 
    if aux_given
       save([ident '_aux.mat'], 'aux', '-v7');  
    end
