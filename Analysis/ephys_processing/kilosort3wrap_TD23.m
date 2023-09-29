@@ -151,12 +151,13 @@ pathToYourConfigFile =  [pthPre 'github' filesep 'KS3_Pipeline' filesep 'Kilosor
 % conversion from Max used until animal specific channelmaps are
 % created
 channelmapfile = [pthPre 'github' filesep 'TD23' filesep 'Analysis' filesep 'ephys_processing' filesep 'ChannelMapAZ.mat'];
-maps = load(channelmapfile);
+load(channelmapfile)
+maps = ChannelMapAZ;
 % maps = maps.maps;
 % date = str2double(dirlist(ses).name(end-12:end-7));
 % time = str2double(dirlist(ses).name(end-5:end));
 % mapStrRHD2DAT = getMapstrRHD2DAT(animal,date,[dirlist(ses).folder filesep dirlist(ses).name],time);
-chanMap = ChanMapConvert(maps.(animal).array_map,maps.(animal).region,animal);
+chanMap = ChanMapConvert(maps.(animal).array_map, maps.(animal).region, animal);
 
 % for PMC TD19 KS compatible chanMaps are prepared for each animal
 %      chanMap = ChanMapConvertTD19(pathToChanMap,[animal mapStr]);
@@ -211,7 +212,7 @@ rez                = datashift2(rezraw, 0);
 
 rez_template                = template_learning(rez_spikes, tF, st3);
 
-[rez_sorted, st3, tF, ~, spikeAmps]     = trackAndSort(rez_template);
+[rez_sorted, st3, tF, fW, spikeAmps]     = trackAndSort(rez_template);
 
 rez_clustered               = final_clustering(rez_sorted, tF, st3);
 
@@ -219,7 +220,7 @@ rez_final                = find_merges(rez_clustered, 1);
 
 rez_final = ContaminationPercent(rez_final, 2); % refractory period in ms
 %%
-[rez_post, ~]  = precuration(rez_final, tF, spikeAmps);
+[rez_post, spikeAmps_post]  = precuration(rez_final, tF, spikeAmps);
 rez_post = find_merges(rez_post,1);
 rez_post = reset_clust_ids(rez_post);
 rez_post = ContaminationPercent(rez_post, 2); % refractory period in ms
