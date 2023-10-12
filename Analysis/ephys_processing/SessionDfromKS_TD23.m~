@@ -212,14 +212,11 @@ end
 
 % if numel(rew)>numel(fv_on)/4
 if numel(rew)/2>numel(fv_on)/4
-%     error('extra reward(s) during session!')
-    error('extra drop(s)/fakedrop(s) during session!')
+    error('extra reward(s) during session!')
     %     d=nan;
     %     return
-% elseif numel(rew)<numel(fv_on)/4
-elseif numel(rew)/2<numel(fv_on)/4
-%     error('reward(s) missing!')
-    error('drop(s)/fakedrop(s) missing!')
+elseif numel(rew)<numel(fv_on)/4
+    error('reward(s) missing!')
     %     d=nan;
     %     return
 end
@@ -266,13 +263,13 @@ for i=1:length(events)
        error('No drop/fakedrop time for this trial!')
     end
     
-%     if ~isempty(d.licks{sc})
-%         if i<length(events)
-%             events(i).licks = licks(licks>fv_on(i) & licks<fv_on(i+1));
-%         else
-%             events(i).licks = licks(licks>fv_on(i) & licks<fv_off(i)+3);
-%         end
-%     end
+    if ~isempty(d.licks{sc})
+        if i<length(events)
+            events(i).licks = licks(licks>fv_on(i) & licks<fv_on(i+1));
+        else
+            events(i).licks = licks(licks>fv_on(i) & licks<fv_off(i)+3);
+        end
+    end
     
 end
 

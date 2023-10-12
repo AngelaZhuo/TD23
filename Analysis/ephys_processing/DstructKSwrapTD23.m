@@ -25,7 +25,7 @@ soi = [];
 %     clustering = [clustering filesep 'reconv3'];%cured2';
 % end
 % fs_cl = strfind(clustering,filesep);
-database = [pthPre filesep 'KS3Output' filesep '20230626_PMC_tagging'];
+database = [pthPre filesep 'KS3' filesep '20230626_PMC_tagging'];
 % database = [pthPre{1} 'TD19' filesep 'DATA' filesep 'DONE_KS3_auto'];%/zi-flstorage/data/Max/H18datadata';
 % database = '\\zi\flstorage\dep_psychiatrie_psychotherapie\group_entwbio\data\Max\H18datadata';
 % prdgm = 'TD19_EPhys';
@@ -53,7 +53,7 @@ else
 end
 
 while ~isempty(dirlist)
-% while ~isempty(dirlist) % ugly bug fix to prevent l.73ff to go out of function
+while ~isempty(dirlist) % MA: ugly bug fix to prevent l.73ff to go out of function
 currfolders = {dirlist.name};
 
 % get folder list with KS output to put into d-struct
@@ -102,8 +102,8 @@ end
 ll = tic;
 N_f=length(KS_sessions);
 fail_counter = 1;
-sc = 1;
-pc = 1;
+% sc = 1;
+% pc = 1;
 
 logDir = [database filesep 'log' filesep];
 if ~isfolder(logDir)
@@ -139,7 +139,7 @@ dirlist([dirlist.done])=[];
 
 fprintf('Total time was: %d \n', toc(ll));
 fprintf('Number of failed Conversions: %d \n', fail_counter-1);
-% end
+end
 end
 end
 

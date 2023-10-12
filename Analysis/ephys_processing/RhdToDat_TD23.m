@@ -4,7 +4,7 @@ clear
 
 Functions_directory = "/home/yi.zhuo/Documents/Github"; addpath(genpath(Functions_directory))
 Day_path = '/zi-flstorage/data/Angela/DATA/TD23/RAW';
-output_dir = '/zi-flstorage/data/Angela/DATA/TD23/KS3Output/';
+output_dir = '/zi-flstorage/data/Angela/DATA/TD23/KS3/';
 load '/home/yi.zhuo/Documents/Github/TD23/Analysis/ephys_processing/ChannelMapAZ.mat';
 map = ChannelMapAZ;
 
