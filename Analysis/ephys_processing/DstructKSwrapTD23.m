@@ -31,8 +31,9 @@ database = [pthPre filesep 'KS3' filesep '20230626_PMC_tagging'];
 % prdgm = 'TD19_EPhys';
 output = [pthPre filesep 'KS3Dstructs' filesep clustering];%/zi-flstorage/data/Max/H18Dstructs';
 % database = [database filesep prdgm];
-maps = load(['/home/yi.zhuo/Documents/Github/TD23/Analysis/ephys_processing' filesep 'ChannelMapAZ.mat']);
-% maps=maps.maps;
+load(['/home/yi.zhuo/Documents/Github/TD23/Analysis/ephys_processing' filesep 'ChannelMapAZ.mat']);
+maps=ChannelMapAZ;
+% maps=maps.maps; %maps should contain each animal as a field
 
 
 %% Get list of all sessions
@@ -69,7 +70,7 @@ for dx=1:length(currfolders)
     all_sessions(dx).folder = [dirlist(dx).folder filesep dirlist(dx).name];
     
     % KS output present?
-    if isfolder([database  filesep currfolders{dx} filesep clustering])
+    if isfolder([database  filesep currfolders{dx} filesep clustering filesep 'reconv3'])
         KS_sessions(sx) = all_sessions(dx);
         sessionID{sx} = currfolders{dx};
         KS_folders{sx} = currfolders{dx};
@@ -117,7 +118,7 @@ for k=1:N_f
     sesTic=tic;
     fprintf('\n processing session# %d of %d \n \n', k, N_f)
     try
-        d = SessionDfromKS_TD23(KS_sessions(k).folder, clustering,maps);
+        d = SessionDfromKS_TD23(KS_sessions(k).folder, [clustering filesep 'reconv3'],maps);  %must take output from 'reconv3' folder
         if ~isfolder([output filesep sessionID{k} filesep])
             mkdir([output filesep]);
         end
