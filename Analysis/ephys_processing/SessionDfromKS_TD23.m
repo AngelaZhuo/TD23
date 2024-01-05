@@ -326,6 +326,7 @@ for ux=1:length(d.clust_params)
         d.info(sc).warning = append(d.info(sc).warning,'--',warning_msg);
         disp(getReport(MException.last))
     end
+    %'d1''d2''da'come from Mirko's cohort
     if contains(animal,'d1')
         gt ='D1';
     elseif contains(animal,'d2')
@@ -333,7 +334,7 @@ for ux=1:length(d.clust_params)
     elseif contains(animal,'da')
         gt='DAT';
     end
-    d.clust_params(ux).genotype = gt;
+    d.clust_params(ux).genotype = 'd1'; %TD23 only contains d1-cre animals
     d.clust_params(ux).side = maps.(animal).side(tetrode);     %side=1 indicates left himisphere and side=2 indicates right hemisphere
 %     d.clust_params(ux).antshift = maps.(animal).antshift(tetrode);  %antshift=1 indicated that the tetrode shifted anterior in MA's cohort      
     
