@@ -76,7 +76,8 @@ for session=1:numel(session_bundle)
         % load data
         disp('reading...')
         [a_data, d_data, ~, ~, ~, ~, aux_input_data]  = IntanImport(rhdsortedfiles{i}, rhd_path);
-        %a_data(amplifier) is the ephys data
+        %a_data(amplifier) is the ephys data 
+        %aux input is additional motion data in 3-dim on the headstage; not used   
         %board_adc_data=(board_adc_data)'; TD23 does not have adc (sniff) data 
         idx=cell2mat(array_map)+1;
         try
