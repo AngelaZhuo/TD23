@@ -6,13 +6,24 @@ recompute = false;
 warning_msg = ''; %-> collects warning messages about session, put into d.info
 
 protocol_dir = [KSdir filesep];%'/zi-flstorage/data/Max/H18protocols/';
+find_filesep = strfind(KSdir,filesep);
+tag = KSdir(find_filesep(end-1)+10:find_filesep(end)-1);
 
-odorchan = 2;
+if contains(tag, 'PMC') && ~contains(tag, 'tagging')
+    laserchans = [];
+elseif contains(tag,'tagging')
+    laserchans = [5]; %[OptRed]
+elseif contains(tag, 'silence')
+    laserchans = [5 7 8]; %[OptRed OptBlue Sham]
+elseif contains(tag, 'excite')
+    laserchans = [5 7 8]; %[OptRed OptBlue Sham]
+end
+
+odorchan = 2; %FV
 rewchan = [3 4];%3; %TD23 contains both realdrop and fakedrop (dummy pump) channels
 % lickchan = 6;%3;
 % sniffchan = NaN; %1
 % laserchans = [3 5]; % [VTA VS] %[6 8];
-laserchans = [5]; %TD19 the laserchans were [3 5]
 % min_lick_length = 20; %No lick data in TD23
 % min_lick_interval = 20;
 region_names = {'NAcc' 'OT' 'VTA'};
@@ -52,11 +63,11 @@ dig = load([KSdir filesep sessionfiles(dx).name]);
 %% check digital and protocol files
 
 if sum(protidx)>1 % more than one protocolfile for the animal on that day?
-    warning('more than one protocol.')
-    d= nan;
+    error('more than one protocol.')
+    d = nan;
     return;
 elseif sum(protidx)==0
-    warning('no protocol found')
+    error('no protocol found')
     odorchan = 3; % take reward timestamps as trials
     protocol = ConstructProtocolFromDigitalTD19(dig, sessionfiles(dx).name);
     if ~isstruct(protocol)
@@ -84,7 +95,7 @@ toc
 %% load ks output
 tic
 disp('import KS output')
-d = load_KS_spikes_laser_TD19([KSdir filesep clustering],laserchans);
+d = load_KS_spikes_laser_TD23([KSdir filesep clustering],laserchans);
 
 
 toc
@@ -108,10 +119,16 @@ dchannels = dig.dchannels(1:30:end, :); %downsampling 30K/s -> 1K/s
 
 %% laser stuff
 if ~isempty(laserchans)
-    laser{1} = find(diff(dchannels(:,laserchans(1)))==1)/1000;
-%     laser{2} = find(diff(dchannels(:,laserchans(2)))==1)/1000;
+    for lax = 1:numel(laserchans)
+    laser{lax} = find(diff(dchannels(:,laserchans(lax)))==1)/1000; 
+    end
     d.laser{sc} = laser;
 end
+% if ~isempty(laserchans)
+%     laser{1} = find(diff(dchannels(:,laserchans(1)))==1)/1000;
+%     laser{2} = find(diff(dchannels(:,laserchans(2)))==1)/1000;
+%     d.laser{sc} = laser;
+% end
 
  %% lick stuff
 % if size(dchannels,2)==lickchan %~isempty(lickchan) && ~isempty(events)
