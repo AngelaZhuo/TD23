@@ -118,7 +118,7 @@ for k=1:N_f
     sesTic=tic;
     fprintf('\n processing session# %d of %d \n \n', k, N_f)
     try
-        d = SessionDfromKS_TD23(KS_sessions(k).folder, [clustering filesep 'reconv3'],maps, output);  %must take output from 'reconv3' folder
+        d = SessionDfromKS_TD23(KS_sessions(k).folder, [clustering filesep 'reconv3'],maps);  %must take output from 'reconv3' folder
         if ~isfolder([output filesep])
             mkdir([output filesep]);
         end

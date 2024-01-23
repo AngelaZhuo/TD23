@@ -1,4 +1,4 @@
-function d = SessionDfromKS_TD23(KSdir,clustering,maps,output_path)
+function d = SessionDfromKS_TD23(KSdir,clustering,maps)
 %% MScheller 120921.
 %%Mirko Articus 220110: customized
 %AZ 231011 modified from SessionDfromKS_TD19
@@ -356,18 +356,22 @@ for ux=1:length(d.clust_params)
 %     d.clust_params(ux).antshift = maps.(animal).antshift(tetrode);  %antshift=1 indicated that the tetrode shifted anterior in MA's cohort      
     
     
-    if ~isempty(laserchans)
-        [d.clust_params(ux).crosstagVS, d.clust_params(ux).taginfo] = CrossTagTD23(d,ux,1); %crosstag=1(excited);crosstag=2(inhibited);crosstag=3(biphasic) %Taginfo serves to plot tag correlogram
-        TagDir = [output_path filesep 'tag_plots' filesep];
-        if ~isfolder(TagDir)
-        mkdir(TagDir)
-        end
-        try
-        saveas(gcf,[TagDir d.clust_params(ux).session '_unit' num2str(ux) '.png'])
-        catch 
-        end
-        clf
-    end
+%     if ~isempty(laserchans)
+%         [d.clust_params(ux).crosstagVS, d.clust_params(ux).taginfo,fh] = CrossTagTD23(d,ux,1); %crosstag=1(excited);crosstag=2(inhibited);crosstag=3(biphasic) %Taginfo serves to plot tag correlogram
+%         TagDir = [output_path filesep 'tag_plots' filesep];
+%         if ~isfolder(TagDir)
+%         mkdir(TagDir)
+%         end
+%         if ~isempty(fh)
+%             saveas(fh,[TagDir d.clust_params(ux).session '_unit' num2str(ux) '.png'])
+%             close(fh)
+%         end
+%         
+%         [d.clust_params(ux).tag_lat] = load_taglat_TD23(d,ux); %latency for highest bin in tagged unit
+%         
+%         dataset = 'KS3';
+%         d.clust_params(ux).([d.clust_params(ux).genotype '_tagged']) = tag_eval_TD23(d,ux,dataset);
+%     end
     
     
     if ux>1
