@@ -135,7 +135,7 @@ end
 end
 end
 cd(savedir);
-save d.mat d;
+save d_info.mat d;
 end
 
 cd(savedir);
@@ -245,4 +245,22 @@ end
 end
 
 cd(savedir);
-save d.mat d;
+save d_info.mat d;
+
+
+%% Add ID from the first rhd file
+
+load '\\zi\flstorage\dep_psychiatrie_psychotherapie\group_entwbio\data\Angela\DATA\TD23\D-struct\d_info.mat'
+% datdir = '\\zi\flstorage\dep_psychiatrie_psychotherapie\group_entwbio\data\Angela\DATA\TD23\KS3'; %path for the dat files
+% all_dat = getAllFiles(datdir,'*.dat',1);
+% all_dat = all_dat(~contains(all_dat,'temp'));
+
+for sx = 1:numel(d.info)
+rhdlist = dir(d.info(sx).rhd_path);
+rhdlist(~contains({rhdlist.name},'rhd'))=[];
+d.info(sx).ID=rhdlist(1).name(1:end-4);
+end
+
+
+cd(savedir);
+save d_info.mat d;

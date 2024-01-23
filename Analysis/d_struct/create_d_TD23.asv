@@ -37,8 +37,7 @@ if TD23
 % all_sessions = [getAllFiles(rawdir,'*protocol.mat',1); all_sessions_txt];
 % else
 all_sessions = getAllFiles(rawdir,'*protocol.mat',1);
-all_sessions = all_sessions(~contains(all_sessions,'test'))
-contains_test = contains(all_sessions,'t')
+all_sessions = all_sessions(~contains(all_sessions,'test'));
 end
 all_sessions = sort(all_sessions);
 
@@ -146,18 +145,20 @@ if nc
     
 animals = unique({d.info.animal});
 paras = unique({d.info.tag});
-base_para = paras(~contains(paras,'TD22_'));
+pat = ["silence", "excite", "PMC"];
+base_para = paras(contains(paras,pat));
 for a=1:numel(animals)
     n_count = 0;
     % base paradigm
     base_sessions = find(contains({d.info.tag}, base_para) & contains({d.info.animal}, animals(a)));
     for rec_idx = base_sessions
-       if ~isequal({d.info(rec_idx).tag},base_para(3))
-       blocks = find(contains(base_para,d.info(rec_idx).tag));
-       n_count = n_count + blocks/3; 
-       else
-           n_count = n_count + 1;
-       end
+%        if ~isequal({d.info(rec_idx).tag},base_para(3))
+%        blocks = find(contains(base_para,d.info(rec_idx).tag));
+%        n_count = n_count + blocks/3; 
+%        else
+%            n_count = n_count + 1;
+%        end
+       n_count = n_count +1; 
        d.info(rec_idx).tag_ncount = n_count;
     end
     % all other paradigms, no n-count needed
@@ -242,6 +243,22 @@ for vidx = 1:numel(path) %no_clear_match
 end
    
 end
+
+cd(savedir);
+save d.mat d;
+
+
+%% Add ID from the first dat file
+
+load '\\zi\flstorage\dep_psychiatrie_psychotherapie\group_entwbio\data\Angela\DATA\TD23\D-struct\d_info.mat'
+% datdir = '\\zi\flstorage\dep_psychiatrie_psychotherapie\group_entwbio\data\Angela\DATA\TD23\KS3'; %path for the dat files
+% all_dat = getAllFiles(datdir,'*.dat',1);
+% all_dat = all_dat(~contains(all_dat,'temp'));
+
+for sx = numel(d.info)
+rhdlist = dir()
+d.info(sx)=rhdlist(1).name(1)
+
 
 cd(savedir);
 save d.mat d;
