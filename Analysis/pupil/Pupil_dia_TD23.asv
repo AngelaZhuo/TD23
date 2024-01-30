@@ -85,12 +85,12 @@ for vx = ID
     hold on
     plot(gca, d.pupil(d_info_index).raw_trace);
     title([current_animal_name,' on the ',current_date]);
-    exportgraphics(gcf,fullfile('\\zi\flstorage\dep_psychiatrie_psychotherapie\group_entwbio\data\Angela\DATA\TD23\Pupil\plots\dia_trace',[current_animal_name,'_',current_date,'.png']))
+    exportgraphics(gcf,fullfile('\\zi\flstorage\dep_psychiatrie_psychotherapie\group_entwbio\data\Angela\DATA\TD22\Pupil\plots\Diameter\08.09-17.09_thr0.99',[current_animal_name,'_',current_date,'.png']))
     close all;
     
 end
 
-    save('\\zi\flstorage\dep_psychiatrie_psychotherapie\group_entwbio\data\Angela\DATA\TD23\D-struct\d_info.mat','d');
+    save('\\zi\flstorage\dep_psychiatrie_psychotherapie\group_entwbio\data\Angela\DATA\TD22\D-struct\d.mat','d');
 
 
 %% Synchronize digitals with the protocol information
@@ -100,8 +100,8 @@ for vx = 1:numel(Videolist)
 
     % find the digital file from this session
     [~,video_name] = fileparts(Videolist{vx});
-    current_animal_name = video_name(7:9);
-    current_date = video_name(11:18);
+    current_animal_name = video_name(1:3);
+    current_date = video_name(5:12);
     
     d_info_index = find(ismember({d.info.animal}, current_animal_name) & ismember({d.info.date}, current_date));
     
@@ -120,9 +120,9 @@ for vx = 1:numel(Videolist)
     
     % CAVE: CHOOSE RIGHT CHANNEL FOR FV! add odor latency
     odor_latency = 0.09 ; % EPhys double setup
-    fvtrace = dchannels(:,2); 
+    fvtrace = dchannels(:,1); 
 
-    freq = 30000; % sample rate
+    freq = 20000; % sample rate
     fv_off = find(diff(fvtrace)== -1)/freq + odor_latency;
     fv_on = find(diff(fvtrace)== 1)/freq + odor_latency;
     
@@ -183,8 +183,8 @@ for vx = 1:numel(Videolist)
     end
 
     % CAVE: CHOOSE RIGHT CHANNEL FOR REWARD SIGNAL! 
-    droptrace = dchannels(:,3)+ dchannels(:,4); %+dchannels(:,4)for devaluation
-    
+    droptrace = dchannels(:,2)+ dchannels(:,3); %+dchannels(:,4)for devaluation
+
     % drop latency - depending on setup - CHECK!
     drop_latency = 0.52;           %second %0.1;
 
