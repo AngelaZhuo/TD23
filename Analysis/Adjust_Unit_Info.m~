@@ -106,9 +106,7 @@ end
 %% Add pump info to the d-struct
 %20240402
 
-% load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_24-Mar-2024.mat')
-
-clearvars -except d
+load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_24-Mar-2024.mat')
 
 [d.info.pump] = deal(nan);
 PMC_sessions = d.info(contains({d.info.tag},{'PMC','silence','excite'}));
@@ -118,11 +116,10 @@ for ses = 1:size(d.info,2)
     doi = find(strcmp(d.info(ses).date,dates));
     if ~isempty(doi)
         if ismember(doi,[1 3 6 7 9 10 12 13 15 17 19 22 24 26 28 30 32 34 36 38 40])
-            d.info(ses).pump = 1;
+            d.info(ses).pump
         else
-            d.info(ses).pump = 2;
         end
     end
 end
 
-save (['/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_' date '.mat'],'d','-v7.3')
+clearvars -except d
