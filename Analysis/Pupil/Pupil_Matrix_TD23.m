@@ -3,8 +3,8 @@
 clear
 PVdirectory = "/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3";
 addpath(genpath(PVdirectory))
-Functions_directory = "/home/yi.zhuo/Documents/Github/TD22/Analysis/Pupil/Master_GLM"; addpath(genpath(Functions_directory))
-cd(Functions_directory)
+% Functions_directory = "/home/yi.zhuo/Documents/Github/TD22/Analysis/Pupil/Master_GLM"; addpath(genpath(Functions_directory))
+% cd(Functions_directory)
 
 %Load the d-struct
 load("d_02-Apr-2024.mat") % You might need to update this line
@@ -25,10 +25,16 @@ for s = 17:30
         Sesser{s} = [181:190] + (s-17)*10;
 end
 
-Events = [21,33,45,55,67,79,164];  %Event time in ms in one trial
+Events = [41]
+Events([2, 3]) = [Events(1) + 24.4, Events(1) + 24.4 + 24.4];  %Event time in ms in one trial
+
+Namer = string([]); 
+Pupil = [];
+TM = [];
 
 % Matrix creation loop:
-for s = [15, 17:30]
+% for s = [15, 17:30]
+for s = 1:30
     teil = 1;
     Matrices.(Regions{teil}).matrix =[];
     Matrices.(Regions{teil}).trialMatrix =[];
@@ -37,6 +43,7 @@ for s = [15, 17:30]
     Matrices.(Regions{teil}).events = Events;
     uu = 0;
     for u = Sesser{s}
+        Adder = [convertCharsToStrings(PVsmall.info(u).animal) + "_" + s, convertCharsToStrings(PVsmall.info(u).animal), s, u];
     %     diam = PVsmall.pupil(u).raw_trace;
         diam = PVsmall.pupil(u).aligned_trace;
         diam(diam == 0) = NaN;
@@ -53,32 +60,49 @@ for s = [15, 17:30]
         diamTime(diamTime>TotalTime) = [];
         diam(numel(diamTime)+1:end) = [];
         for tr = 1:Trials
-            % 2-second Baseline; 20 bins of .100s 
-            Bins1 = int64(Session(tr).fv_on_odorcue/BinSize-1) - 2/BinSize :int64(Session(tr).fv_on_odorcue/BinSize-1); Bins1 = Bins1(end-int64(2/BinSize)+1:end);
-            % CS1 plus 1.2 seconds; 24 bins of .100s
-            Bins2 = Bins1(end)+1 : Bins1(end)+1 + 2.4/BinSize; Bins2 = Bins2(1:int64(2.4/BinSize));
-            % 1.2s before CS2; 12 bins of .100s
-            Bins3 = int64(Session(tr).fv_on_rewcue/BinSize-1) - 2/BinSize :int64(Session(tr).fv_on_rewcue/BinSize-1); Bins3 = Bins3(end-int64(1.1/BinSize):end);
-            % CS2, Reward and 8s afrer Reward; 112 bins of .100s
-            Bins4 = Bins3(end)+1 : Bins3(end)+1 + int64(11.2/BinSize); Bins4 = Bins4(1:int64(11.2/BinSize));
             
-            if tr == 150 && Bins4(end) > length(diam)
-               diam((length(diam)+1):Bins4(end)) = NaN;
+            % TD_23 - CS1, CS2 and US have a maximum jitter of 0.3 ms, which we neglect because it is much smaller than our resolution of 100ms 
+            % 2-second Baseline; 20 bins of .100s 
+            Bins = int64(Session(tr).fv_on_odorcue/BinSize) - 4/BinSize : int64(Session(tr).fv_on_odorcue/BinSize)-1;
+            Bins = cat(2, Bins, Bins(end)+1 : Bins(end)+1 + 2.444/BinSize + 2.444/BinSize + 8.4/BinSize); 
+            
+            % TD_19 with jitter
+%             % 2-second Baseline; 20 bins of .100s 
+%             Bins1 = int64(Session(tr).fv_on_odorcue/BinSize-1) - 2/BinSize :int64(Session(tr).fv_on_odorcue/BinSize-1); Bins1 = Bins1(end-int64(2/BinSize)+1:end);
+%             % CS1 plus 1.2 seconds; 24 bins of .100s
+%             Bins2 = Bins1(end)+1 : Bins1(end)+1 + 2.4/BinSize; Bins2 = Bins2(1:int64(2.4/BinSize));
+%             % 1.2s before CS2; 12 bins of .100s
+%             Bins3 = int64(Session(tr).fv_on_rewcue/BinSize-1) - 2/BinSize :int64(Session(tr).fv_on_rewcue/BinSize-1); Bins3 = Bins3(end-int64(1.1/BinSize):end);
+%             % CS2, Reward and 8s afrer Reward; 112 bins of .100s
+%             Bins4 = Bins3(end)+1 : Bins3(end)+1 + int64(11.2/BinSize); Bins4 = Bins4(1:int64(11.2/BinSize));
+            
+            if tr == 150 && Bins(end) > length(diam)
+               diam((length(diam)+1):Bins(end)) = NaN;
             end
                     
-            Matrices.(Regions{teil}).matrix(uu, :, tr) = diam([Bins1, Bins2, Bins3, Bins4]);
-            Matrices.(Regions{teil}).jitter(uu, tr) = Session(tr).fv_on_rewcue - Session(tr).fv_off_odorcue - 1.2;
+            Matrices.(Regions{teil}).matrix(uu, :, tr) = diam(Bins);
         end
         
         Matrices.(Regions{teil}).mouse(uu, 1) = string(PVsmall.info(u).animal);
         % Create trial matrix;
-        TM = NaN(1, 3, Trials);
+        TM_ = NaN(1, 3, Trials);
         CS1 = [Session.curr_odorcue_odor_num];
         CS2 = [Session.curr_rewardcue_odor_num];
         US = [Session.drop_or_not];
-        TM(1, 1, :) = CS1; TM(1, 2, :) = CS2; TM(1, 3, :) = US;
+        if ismember(u,[111:320])
+            inhibit_or_not = Session.inhibit_or_not;
+            TM_(1,4,:)= inhibit_or_not;
+        else
+            TM_(1,4,:) = nan(size(CS1));
+        end
+        TM_(1, 1, :) = CS1; TM_(1, 2, :) = CS2; TM_(1, 3, :) = US; 
 %         if Trials == 125; TM(1, :, 126:150) = NaN; end
-        Matrices.(Regions{teil}).trialMatrix(uu, :, :) = TM;
+        Matrices.(Regions{teil}).trialMatrix(uu, :, :) = TM_;
+        
+        
+        Namer = cat(1, Namer, Adder);
+        Pupil = cat(1, Pupil, Matrices.(Regions{teil}).matrix(uu, :, :));
+        TM = cat(1, TM, TM_);
     end
     
     % Change odor identity to the likelihood of the CS1 and CS2 (5 means odor A; 6 means odor B; 7 means odor C; 8 means odor D) 
@@ -87,13 +111,33 @@ for s = [15, 17:30]
     % Matrices.Pupil.trialMatrix(:,:,1:5) = [];
     % Matrices.Pupil.matrix(:,:,1:5) = [];    %Remove the first 5 trials from matrix and trialmatrix to make the baseline for A and B equal
     % Save Before
-    parsave("/zi-flstorage/data/Angela/DATA/TD23/Pupil/Matrices/PMC_ses_" + num2str(s), Matrices);
+%     parsave("/zi-flstorage/data/Angela/DATA/TD23/Pupil/Matrices/PMC_ses_" + num2str(s), Matrices);
+    s
+end
+TM(TM==10) = 6;
+
+
+size(Pupil)
+save("/zi-flstorage/data/Angela/DATA/TD23/Matrices/M_TM_Events_Pupil.mat", "Pupil", "TM", "Events","Namer")
+
+%% Clean the Pupil
+
+% load '/zi-flstorage/data/Angela/DATA/TD23/Matrices/M_TM_Events_Pupil.mat'
+
+Cleaned = NaN(size(Pupil));
+Removed = NaN(size(Pupil));
+for s = 1:size(Pupil,1)
+    [pemp, remp] = CleanPupil_2024(Pupil(s, :, :), TM(s, :, :), int64(Events), 4, 0);
+    Cleaned(s, :, :) = pemp;
+    Removed(s, :, :) = remp;
+%     sgtitle(Namer(s, 2) + " " + Namer(s, 3))
+%     pause
+    s
 end
 
+M = Cleaned;
 
-
-
-
+save("/zi-flstorage/data/Angela/DATA/TD23/Matrices/Clean_Pupil.mat", "M", "TM", "Events","Namer")
 
 
 
