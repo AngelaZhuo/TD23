@@ -126,3 +126,7 @@ for ses = 1:size(d.info,2)
 end
 
 save (['/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_' date '.mat'],'d','-v7.3')
+
+%% Adjust the reward time for pump1
+
+% load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_24-Mar-2024.mat')
