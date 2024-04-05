@@ -13,6 +13,7 @@ function [chapter, trialmatrix, ex_vectors_cur] = do_constructTrialMatrix_TD23(p
 %         ChosenVec = 189;
 %         ex_vectors_cur=experiments(:,:,ChosenVec);
        % choose vectors randomly
+        rng("shuffle")  %this line was added after TD23 was over, realizing rand did not truly randomize 
         random=rand(1);
         if random>0.5
            ChosenVec=ceil(rand(1)*200);
