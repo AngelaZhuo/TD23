@@ -128,5 +128,23 @@ end
 save (['/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_' date '.mat'],'d','-v7.3')
 
 %% Adjust the reward time for pump1
+%20240405
+% -0.3s(300ms) for all the reward_time in d.events when the pump is pump1 due to difference in drop latency 
 
-% load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_24-Mar-2024.mat')
+load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_02-Apr-2024.mat')
+old_d = d;
+
+clearvars -except old_d
+
+for ses = 1:size(old_d.info,2)
+    if old_d.info(ses).pump == 1
+        
+    end
+
+end
+
+%sanity check
+
+
+save (['/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_' date '.mat'],'d','-v7.3')
+
