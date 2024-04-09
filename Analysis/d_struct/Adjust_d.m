@@ -128,23 +128,41 @@ end
 save (['/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_' date '.mat'],'d','-v7.3')
 
 %% Adjust the reward time for pump1
-%20240405
-% -0.3s(300ms) for all the reward_time in d.events when the pump is pump1 due to difference in drop latency 
+%20240408
+%Align all the reward_time to the reward pump drop latency of that day session
+%Pump1 has a 230ms delay between pump_on and water drop at the lickport; Pump2 has a 560ms delay between the pump_on and water drop at lick port
+%The drop_latency taken in the past was 520ms, so if it's pump1 as R pump, -290ms to the reward_time; if pump2 is the R pump, +40ms to the reward_time 
 
 load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_02-Apr-2024.mat')
-old_d = d;
+% old_d = d;
+new_d = d;
 
-clearvars -except old_d
-
-for ses = 1:size(old_d.info,2)
-    if old_d.info(ses).pump == 1
-        
+for ses = 1:size(d.events,2)
+    if d.info(ses).pump == 1
+        for tr = 1:numel(d.events{1,ses})
+        new_d.events{1,ses}(tr).reward_time = d.events{1,ses}(tr).reward_time-0.29; %in seconds
+        end
+    elseif d.info(ses).pump == 2
+        for tr = 1:numel(d.events{1,ses})
+        new_d.events{1,ses}(tr).reward_time = d.events{1,ses}(tr).reward_time+0.04; 
+        end
     end
-
 end
 
-%sanity check
+%% Mark putative ventral pallidum (pVP) units as region = 4
 
+VP_units = [17026,17052,29248,29267,33000,33883,35103,40313,40317,47451,47461,47464,43166,16164,16775,29396,33169,33181,33184,33676,33681,34175,39582,39583,39589,39591,40111,40133,40135,43250,43264,16298,17114,29048,29057,33369,34437,34720,34722,38993,39487,39491,40003,40004,43330,43334,43998,44202,44207,40437,40687,18213,41527,41901,45949,18425,41173,41769,41794,45432]; 
+% It's important to keep the same index in the d.clust_params
+
+for vp = 1:numel(VP_units)
+    new_d.clust_params(VP_units(vp)).region_coding = 4;
+end
+
+
+%%
+clearvars -except new_d
+
+d = new_d;
 
 save (['/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_' date '.mat'],'d','-v7.3')
 
