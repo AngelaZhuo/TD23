@@ -10,7 +10,7 @@ for u = 1:units
         check1 = C(1) == TM(u, 1, t) || C(2) == TM(u, 1, t) ;
         check2 = C(3) == TM(u, 2, t) || C(4) == TM(u, 2, t) ;
         check3 = C(5) == TM(u, 3, t) || C(6) == TM(u, 3, t) ;
-        if size(TM,2)==4
+        if size(TM,2)==4&&numel(Manip)==1
             check4 = TM(u,4,t) == Manip;
             DesiredIndex(u, 1, t) = check1 & check2 & check3 & check4;
         else

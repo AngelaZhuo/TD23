@@ -25,6 +25,7 @@ end
 
 %% Plot the unit info
 % For the decision of setting the region of the tetrode in the channel map as 99 (out of the region)
+% Make some plots of the units in tetrodes that have low unit count
 clearvars -except d
 
 % set(groot,'defaultFigureUnits','centimeters')
@@ -35,4 +36,17 @@ for un=1:numel(Uix)
     sgtitle([d.info(d.map(Uix(un))).animal, '_tetrode ', num2str(d.clust_params(Uix(un)).tetrode)],'Interpreter','none')
     exportgraphics(gcf,fullfile('/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitInfo',['x10_tx',num2str(d.clust_params(Uix(un)).tetrode),'_un',num2str(Uix(un)),'.png']))
     close
+end
+
+
+%% Make a table of the unit count
+
+load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_09-Apr-2024.mat')
+
+clearvars -except d
+animals = ["x0"+string(1:9) "x10"];
+
+for 1:numel(unique({d.info.tag_ncount}))
+    
+
 end
