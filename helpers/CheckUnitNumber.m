@@ -41,12 +41,27 @@ end
 
 %% Make a table of the unit count
 
-load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_09-Apr-2024.mat')
+% load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_09-Apr-2024.mat')
 
 clearvars -except d
 animals = ["x0"+string(1:9) "x10"];
+tag_ncount = unique([d.info.tag_ncount]);
+tag_ncount = tag_ncount(2:end);
 
-for 1:numel(unique({d.info.tag_ncount}))
-    
-
+for ses = 1:numel(tag_ncount)
+    ses_tag{ses} = d.info(ismember([d.info.tag_ncount],tag_ncount(ses))).tag;
+    for ax = 1:numel(animals)
+    pMSN(ses,2*ax-1) = sum(UnitSelectionMod(d,"PmsnSct(" +string(ses)+ ")Animal("+animals(ax)+")"));
+    pDAN(ses,2*ax) = sum(UnitSelectionMod(d,"PdanSct(" +string(ses)+ ")Animal("+animals(ax)+")"));
+    Variables{2*ax-1} = "pMSN_"+animals(ax);
+    Variables{2*ax} = "pDAN_"+animals(ax);
+    end
 end
+
+zero_column = zeros(41,1);
+pMSN = cat(2,pMSN,zero_column);
+all = pMSN + pDAN;
+T = array2table(all,"VariableNames",string(Variables));
+
+T = [table(ses_tag','VariableNames',{'ses_tag'}) T]; %concatenate the table
+writetable(T,'/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitCount/Unitcount_Overview(d_09-Apr-2024.mat).xls')

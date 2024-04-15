@@ -41,7 +41,10 @@ for mx = 1:numel(mods)
             ulog([d.clust_params.medlat]~=1) = false;
         case 'Lat'
             ulog([d.clust_params.medlat]~=2) = false;
-            
+        case 'L'
+            ulog([d.clust_params.side]~=1) = false;
+        case 'R'
+            ulog([d.clust_params.side]~=2) = false;
             %regions
         case 'Nac'
             ulog([d.clust_params.region_coding]~=1) = false;
@@ -56,7 +59,7 @@ for mx = 1:numel(mods)
                 ~ismember([d.clust_params.region_coding],[1 2])) = false;
         case 'Pdan'
             ulog([d.clust_params.mean_fr]<=1|[d.clust_params.mean_fr]>=12| ...
-                [d.clust_params.region_coding]~=3|[d.clust_params.antshift]==1|...
+                [d.clust_params.region_coding]~=3|...  %|[d.clust_params.antshift]==1...
                 ~([d.clust_params.funcDAN_odorcue]|[d.clust_params.funcDAN_rewardcue]|[d.clust_params.funcDAN_reward])) = false;
         case 'Pdannofunc'
             ulog([d.clust_params.mean_fr]<=1|[d.clust_params.mean_fr]>=12| ...
