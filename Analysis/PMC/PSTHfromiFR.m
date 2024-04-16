@@ -1,4 +1,7 @@
 function psf = PSTHfromiFR(d,iFR,uids,TM,varargin)
+%input: load d-struct and iFR, uids is the string to put into UnitSelectionMod.m
+%input: TM and varargin are optional
+
 figs = [15 5]; % heatmap; psth & eucleadian
 fs = 6; %fontsize
 ps = [figs(1)*.225 figs(2)*.675;...
@@ -147,6 +150,7 @@ for e = 1:3
     xlim([timevec{e}(1) timevec{e}(end)])
     title(epocStrs{e})    
 end
+% yLim = [-0.2 0.8];
 if exist('yLim','var')
     if isempty(yLim)
         linkaxes(psax,'y')

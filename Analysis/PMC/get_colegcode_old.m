@@ -28,8 +28,7 @@ switch state_str
     case 'CS1'
         legstrs = {["A","B"]};
         colorlabels = {{[1 0 0],[0.0039 0.1765 0.4314]},...%% A, B
-            {[1 0.1 0.7],[0.1 0.4 1]}}; % A, B manipulation
-        %    {[1 .3 0],[0 .2 1]}}; % A, B manipulation
+            {[1 .3 0],[0 .2 1]}}; % A, B manipulation
         trialcode = {[5 99 99; 6 99 99]}; % A, B
         
         
