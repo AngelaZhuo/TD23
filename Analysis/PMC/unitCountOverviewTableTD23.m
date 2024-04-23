@@ -3,53 +3,65 @@
 % - both as excel and plot?
 % saveStr = "/zi-flstorage/data/Mirko/TD23/Plots/EPhys/Units/TD23_Unitcount_Overview("+string(d.filename)+")";
 % saveStr = "/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitCount("+string(d.filename)+")";
-saveStr = "/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitCount/UnitCount_byRegion";
+saveStr = "/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitCount/UnitCount_byParadigm";
 
 [~,dayIdx] = unique([d.info.tag_ncount]);
 dayPara = string({d.info(dayIdx(2:end)).tag});
+dayPara1 = ["pmc" "cs1_silence" "cs1delay_silence" "cs2_silence" "cs2delay_silence" "excitea" "exciteb" "sham"];
 animals = ["x0"+string(1:9),"x10"];
 utypes = ["pMSN" "pDAN"];
 region = ["NAc" "Tu" "LVTA" "RVTA"];
 side = ["L" "R"];
 plt =0;
 
-overTable = table(NaN(41,1));
+overTable = table(NaN(8,1));
 for ax = 1:numel(animals)
-    for tx = 1:41
-        for utx= 1:2
-            for sd = 1:2
-                if utx == 1
-                    if sd == 1
-                        reg = region(2);
-                    else
-                        reg = region(1);                      
-                    end
-                else
-                    if sd == 1
-                        reg = region(3);
-                    else
-                        reg = region(4);                      
-                    end
-                end
-                unitCount = sum(UnitSelectionMod(d,side(sd)+"Animal("+animals(ax)+")"+revCase(utypes(utx))+"Sct("+string(tx)+")"));
-                overTable.(animals(ax)+"_"+utypes(utx)+"_"+reg)(tx)= unitCount;
-            end                
-%             for rg = 1:4
-%                 if rg == 2 || rg == 3
-%                     sd = 1;                    
-%                     unitCount = sum(UnitSelectionMod(d,side(sd)+"Animal("+animals(ax)+")"+revCase(utypes(utx))+"Sct("+string(tx)+")"));
-%                 else
-%                     sd = 2;
-%                     unitCount = sum(UnitSelectionMod(d,side(sd)+"Animal("+animals(ax)+")"+revCase(utypes(utx))+"Sct("+string(tx)+")"));
-%         %             overTable.(animals(ax)+"_"+utypes(utx))(tx)= unitCount;
-%                     overTable.(animals(ax)+"_"+utypes(utx)+"_"+region(rg))(tx)= unitCount;
-%                 end
-
+    for tx = 1:8
+        for utx = 1:2
+            unitCount = sum(UnitSelectionMod(d,"Animal("+animals(ax)+")"+revCase(utypes(utx))+"X("+dayPara1(tx)+")"));
+            overTable.(animals(ax)+"_"+utypes(utx)+"_")(tx)= unitCount;
         end
     end
 end
+% overTable = table(NaN(41,1));
+% for ax = 1:numel(animals)
+%     for tx = 1:41
+%         for utx= 1:2
+%             for sd = 1:2
+%                 if utx == 1
+%                     if sd == 1
+%                         reg = region(2);
+%                     else
+%                         reg = region(1);                      
+%                     end
+%                 else
+%                     if sd == 1
+%                         reg = region(3);
+%                     else
+%                         reg = region(4);                      
+%                     end
+%                 end
+%                 unitCount = sum(UnitSelectionMod(d,side(sd)+"Animal("+animals(ax)+")"+revCase(utypes(utx))+"Sct("+string(tx)+")"));
+%                 overTable.(animals(ax)+"_"+utypes(utx)+"_"+reg)(tx)= unitCount;
+%             end                
+% %             for rg = 1:4
+% %                 if rg == 2 || rg == 3
+% %                     sd = 1;                    
+% %                     unitCount = sum(UnitSelectionMod(d,side(sd)+"Animal("+animals(ax)+")"+revCase(utypes(utx))+"Sct("+string(tx)+")"));
+% %                 else
+% %                     sd = 2;
+% %                     unitCount = sum(UnitSelectionMod(d,side(sd)+"Animal("+animals(ax)+")"+revCase(utypes(utx))+"Sct("+string(tx)+")"));
+% %         %             overTable.(animals(ax)+"_"+utypes(utx))(tx)= unitCount;
+% %                     overTable.(animals(ax)+"_"+utypes(utx)+"_"+region(rg))(tx)= unitCount;
+% %                 end
+% 
+%         end
+%     end
+% end
 overTable=removevars(overTable,'Var1');
-overTable.Properties.RowNames = string(1:41)+"_"+dayPara;
+% overTable.Properties.RowNames = string(1:41)+"_"+dayPara;
+overTable.Properties.RowNames = dayPara1;
+
 
 %%
 if plt
@@ -70,7 +82,7 @@ end
 docDataSrc(fig,saveStr,'unitCountOverviewTableTD23.m',1,'dSrc1',d.filename)
 
 %% save plot and table
-writetable(overTable,saveStr+".xls")
+writetable(overTable,saveStr+".xls",'WriteRowNames',true)
 exportgraphics(fig,saveStr+".png");
 close(fig)
 
