@@ -5,7 +5,7 @@ VP_units = [17026,17052,29248,29267,33000,33883,35103,40313,40317,47451,47461,47
 % load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_09-Apr-2024.mat')
 % load ('/zi-flstorage/data/Angela/DATA/TD23/Matrices/iFR(d_09-Apr-2024)/iFR_causal_andRest_300ms.mat')
 % Plot all the units from the pVP-containing tetrodes from the same day-session (to avoid having too many plots) 
-saveDir = "/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitInfo/VP-containing-tetrodes/";
+saveDir = "/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitInfo/VP-containing-tetrodes/x08tet13/";
 utypes = "Pmsn";
 U2invest_total = [];
 
@@ -21,6 +21,7 @@ end
 
 U2invest_total = unique(U2invest_total);
 
+%%
 for ux = 1: numel(U2invest_total)
     set(groot,'DefaultFigureVisible',0)
     curUnit = U2invest_total(ux);
@@ -99,10 +100,11 @@ for ux = 1: numel(U2invest_total)
     clc
 end
 
+%%
 % animals = ["x0" + string([4 7:9]) "x10"];
 % for an = 1:numel(animals)
-%     Unit_perAnimal(an) = numel(find(contains(animal,animals{an})));
-%     tetrode_perAnimal{an} = unique(cell2mat(tetrode(contains(animal, animals{an}))));
+%     Unit_perAnimal(an) = numel(find(contains(string(animal),animals{an})));
+%     tetrode_perAnimal{an} = unique(cell2mat(tetrode(contains(string(animal), animals{an}))));
 % end
 
 

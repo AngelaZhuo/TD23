@@ -2,7 +2,7 @@
 % MA 2309
 %% inputs
 % fighd             handles for figures to be combined
-% grd               [h w] measures for the h-by-w grid the figures should be integrated in
+% grd               [rows columns] measures for the grid the figures should be integrated in
 % figcoor           grid coordinates at which the figures should be integrated into the figure,
 %                   if left empty the grid is filled column wise top->bottom and left->right
 % figscale          scaling factor, if filled with one value, it applies to all figures,

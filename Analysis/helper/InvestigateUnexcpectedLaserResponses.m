@@ -3,6 +3,7 @@
 % Cases of to look for
 % - pMSN excited by silencing
 % - pMSN inhibited by stimulation (exciteA and exciteB)
+% - Only units from x04, x07-x10 (good learners) were investigated
 function InvestigateUnexcpectedLaserResponses(d,iFR)
 
 animals = ["x0" + string([4 7:9]) "x10"];

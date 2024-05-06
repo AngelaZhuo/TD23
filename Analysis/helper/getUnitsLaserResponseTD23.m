@@ -18,7 +18,7 @@ for sx = 1:numel(sids)
     events = d.events{1,sids(sx)};
     % Paradigm selection: determine what to look for
     switch X
-        case {'CS1_silence','CS1_silence_sham' }
+        case {'CS1_silence','CS1_silence_sham'}
             stimWin = [[events.fv_on_odorcue];[events.fv_on_odorcue]+1.2];
             manip = [events.inhibit_or_not];
         case {'CS1delay_silence','CS1delay_silence_sham'}
