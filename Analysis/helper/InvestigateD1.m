@@ -8,13 +8,13 @@ animals = ["x0" + string([4 7:9]) "x10"];
 utypes = "Pmsn";
 
 X = ["cs1_silence" "cs2_silence" "cs1delay_silence" "cs2delay_silence" "excitea" "exciteb"];
-saveDir = "/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitInfo/d1_tag_prob/d1_tagged";
+saveDir = "/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitInfo/d1_tag_prob/not_d1_tagged/";
 
 
-for xx = 5:numel(X)
+for xx = 5:numel(X)  %First focus on the excitation sessions
     uids = UnitSelectionMod(d,"X("+X(xx)+")"+utypes+"Animals("+strjoin(animals,',')+")");
     %remove units that are already marked as d1_tagged  
-    uids([d.clust_params.d1_tagged]~=1) = false; 
+    uids([d.clust_params.d1_tagged]==1) = false; 
     uids = find(uids);
     %Test unit response to laser
     uresp = getUnitsLaserResponseTD23(d,uids);
@@ -56,6 +56,7 @@ for xx = 5:numel(X)
         titleStr = [d.clust_params(curUnit).animal,'_',d.clust_params(curUnit).date,...
         '. Unit Nr. ',num2str(curUnit),' Tetrode Nr. ',num2str(d.clust_params(curUnit).tetrode)];
     
+    
     %Plot cross-correlograms
         [crosstag_ex, crossinfo, fex] = XcorrExcite(d,curUnit,1);  %cross-correlation from the excitation led/laser during the session
         drawnow
@@ -80,7 +81,7 @@ for xx = 5:numel(X)
         psf = PSTHfromiFR(d,iFR,curUnit,TM,'manipulation',{0 1});
         
         %Combine plots
-        cf = univCombFig([fex,ps,fh,psf],[2 2],1);
+        cf = univCombFig([fex,ps,fh,psf],[2 2],1);  %problem with copyobj in CombineFigures.m 
         axes('Position',cf.Position.*[0 0 1 1],'Box','off','Color','none','YColor','none','XColor','none');
         text(.5,1,string(curr_tag)+" "+utypes+ string(titleStr),'FontSize',7,'FontWeight','bold','Interpreter','none','HorizontalAlignment','center')
         cf.Position =cf.Position+[0 0 0 .5];
