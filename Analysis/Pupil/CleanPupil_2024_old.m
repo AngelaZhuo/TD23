@@ -7,16 +7,15 @@ delta = M(1, 2:end, :) - M(1, 1:end-1, :);
 STD = std(delta, 0, "all", "omitnan"); AVG = mean(delta, "all", "omitnan");
 % STD = std(delta(:, setdiff(1:size(delta,2), Events(3)-1), :), 0, "all", "omitnan"); AVG = mean(delta(:, setdiff(1:size(delta,2), Events(3)-1), :), "all", "omitnan");
 OL = zeros(size(delta));
-OL(delta<AVG-5*STD) = -1; OL(delta>AVG+5*STD) = 2;
-% OL(delta<-35) = -1; OL(delta>+35) = 2;
-Removed = 0;
+OL(delta<AVG-5*STD) = -1; OL(delta>AVG+5*STD) = 2; 
+% OL(delta<-35) = -1; OL(delta>+35) = 2; 
+Removed = 0; 
 for tr = 1:150
-    %reset the values every trial
     win = 0; cou = 0;
     ver = 0; nichte = 0;
     for b = 1:size(M,2)-1
         % There is no jitter in TD23
-%         if b == Events(3)-1
+%         if b == Events(3)-1 
 %             win = 0; cou = 0;
 %             ver = 0; nichte = 0;
 %             continue
@@ -64,15 +63,15 @@ end
 Copy = Copy.*Mask;
 delta = Copy(1, 2:end, :) - Copy(1, 1:end-1, :);
 OL = zeros(size(delta));
-OL(delta<AVG-5*STD) = -1; OL(delta>AVG+5*STD) = -1;
-% OL(delta<-35) = -1; OL(delta>35) = -1;
+OL(delta<AVG-5*STD) = -1; OL(delta>AVG+5*STD) = -1; 
+% OL(delta<-35) = -1; OL(delta>35) = -1; 
 % OL(1, Events(3)-1, :) = 0;
 OL(isnan(delta)) = 2;
 for tr = 1:150
     win = 0; cou = 0;
     ver = 0; nichte = 0;
-    for b = 1:size(M,2)-1
-        if cou == Thresh
+    for b = 1:167
+        if cou == Thresh || b == Events(3)-1
             win = 0; cou = 0;
             ver = 0; nichte = 0;
             continue
@@ -124,13 +123,13 @@ for tr = 1:150
     Interpolated = Interpolated + Times;
 end
 
-% Eliminate values between NaNs where interpolating would have been an outlier
+% Eliminate values between NaNs where interpolating would have been an outlier 
 for tr = 1:150
     win = 0; cou = 0;
     ver = 0; nichte = 0;
     for b = 1:size(M,2)
         % No jitter in TD23
-%         if b == Events(3)-1
+%         if b == Events(3)-1 
 %             win = 0; cou = 0;
 %             ver = 0; nichte = 0;
 %             continue
@@ -216,8 +215,12 @@ if IfPlot
         PlotCopy = (Copy./mean(Copy(:, 1:Events(1)-1, :), 2, "omitnan"));  %normalize to baseline
         Mirko_TD23(PlotCopy, TM, [Events(1), Events(1)+12, Events(2)-1, Events(2), Events(2)+12, Events(3), size(M,2)-1], "diam. (a.u.)", 0, 0)
         title(["Corrected data"; "BL-normalized PSTH"])
-    Samax = {[1, 2]};
+    Samax = {[1, 2]}; 
     SameYLim(gcf, Samax);
 end
 M = Copy;
 end
+
+
+
+
