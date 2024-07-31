@@ -2,9 +2,8 @@ function d = load_KS2_output_in2d_TD23(chan_maps,sessions_of_interest,d)
 
 %% This function loads KS2 output into a d_struct for KS2. the d-struct for all session folder within the root_dir
 % All subfunctions called are under "ePhys/single unit/preproc"
-% As of 06/06/2024, only x04 and x09 of 20230726 & 20230802 were curated
-% sessions_of_interest = [264 269 314 319];
-% load the d-struct for KS2 and channel map 
+% As of 29.07.2024, the output of 20230626 & 20230802 of x04, x07-x10 (10 sessions) are loaded into the d-struct; sessions_of_interest = [264 267:270 314 317:320] 
+% load the d-struct (with d.info,d.events & d.laser) for KS2 and channel map 
  
 
 %% Mirko Articus 20/12
@@ -12,7 +11,8 @@ function d = load_KS2_output_in2d_TD23(chan_maps,sessions_of_interest,d)
 %  based on create_D_OXT2019.mat by David Wolf 2,2020 and load_KS_output_in2d_TD2019.m; adapted for TD23
 % proc_path is the path of the KS2 output of each animal-day session
 
-% sid = [264 269 314 319];
+%Run this part before putting soi in the function
+% sid = [264 267:270 314 317:320];
 % 
 % soi = d_KS2.info(sid);
 % 
@@ -21,8 +21,8 @@ function d = load_KS2_output_in2d_TD23(chan_maps,sessions_of_interest,d)
 %     soi(sx).idx = sid(sx);
 % 
 % end
-% 
-session_list = {sessions_of_interest.proc_path};
+
+session_list = {sessions_of_interest.proc_path};    %Added the proc_path to d.info by hand 
 
 % loc_dir = 'F:\Mirko\DATA\DONE\KS2\curated';
 
@@ -38,7 +38,10 @@ session_list = {sessions_of_interest.proc_path};
 
 regions = {'NAcc' 'OT' 'VTA'};
 
- 
+if ~isfield(d,'spikes')
+    d.spikes = [];
+end
+
 
 if numel(d.clust_params)==1
 
@@ -63,6 +66,11 @@ for ii = 1:length(session_list) %data_list
     curr_id = sessions_of_interest(ii).ID;
 
     chan_map = chan_maps.(animal);
+    
+    % Remove region == 99 for now to avoid the error
+    chan_map.region(1:16) = 1;
+    chan_map.region(17:32) = 2;
+    chan_map.region(33:48) = 3;
 
     curr_dir = session_list{ii};
 
@@ -85,7 +93,7 @@ for ii = 1:length(session_list) %data_list
    end
 
    
-    d.spikes = [];
+    %d.spikes = [];
     d.spikes = cat(2,d.spikes,spikes.spikes);
 
 %    
