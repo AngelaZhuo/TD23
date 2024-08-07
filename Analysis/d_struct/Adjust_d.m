@@ -166,3 +166,12 @@ d = new_d;
 
 save (['/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_' date '.mat'],'d','-v7.3')
 
+
+%% Replace the "tag" field in d.clust_params with "tag" from d.info
+%20240807
+
+for ux = 1:numel(d.clust_params)
+    
+    d.clust_params(ux).tag = d.info(d.map(ux)).tag;
+    
+end

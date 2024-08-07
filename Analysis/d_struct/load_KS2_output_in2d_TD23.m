@@ -66,11 +66,6 @@ for ii = 1:length(session_list) %data_list
     curr_id = sessions_of_interest(ii).ID;
 
     chan_map = chan_maps.(animal);
-    
-    % Remove region == 99 for now to avoid the error
-    chan_map.region(1:16) = 1;
-    chan_map.region(17:32) = 2;
-    chan_map.region(33:48) = 3;
 
     curr_dir = session_list{ii};
 
@@ -82,8 +77,7 @@ for ii = 1:length(session_list) %data_list
 
    %% unit stuff
 
-%    try
-
+%     try
     spikes = load_KS_spikes(curr_dir);
 
    for sp = 1:numel(spikes.clust_params)
@@ -141,8 +135,16 @@ for ii = 1:length(session_list) %data_list
        curr_tetrode                           = spikes.clust_params(uc).tetrode;
 
        d.clust_params(unit_counter).trode     = curr_tetrode;
+       
+       if chan_map.region(curr_tetrode) == 99
+           
+           d.clust_params(unit_counter).region = 'Region99';
 
-       d.clust_params(unit_counter).region    = regions{chan_map.region(curr_tetrode)};
+       else
+
+           d.clust_params(unit_counter).region    = regions{chan_map.region(curr_tetrode)};
+       
+       end
 
        d.clust_params(unit_counter).region_coding    = chan_map.region(curr_tetrode);
 
