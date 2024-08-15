@@ -1,4 +1,6 @@
 %% test response to laser in TD23 manipulation experiments
+% Use bootstrap to determine if the unit laser response was significantly different from sham response 
+% Compare 600ms window after fv_on between manip and sham trials
 %% input
 % - d struct
 % - uids: vector with unit IDs
@@ -40,7 +42,7 @@ for sx = 1:numel(sids)
             manip = [events(stimTrials).excite_or_not];
     end
     
-    % Compare unit wise response laser vs sham using signrank
+    % Compare unit wise response laser vs sham using bootstrap
     for ux = find(sUnits==sx)'
         spikes = d.spikes{uids(ux)};        
         for mx = 0:1
@@ -54,19 +56,49 @@ for sx = 1:numel(sids)
             end            
         end
         
-        % assign units resp 
-        if signrank(mean(tmpSpikeDist{1},1),mean(tmpSpikeDist{2},1))<p_thresh
-           if mean(mean(mean(tmpSpikeDist{2},1)-tmpSpikeDist{1},1))>0
-               lresp(ux) = 1;
-           else
-               lresp(ux) = -1;
-           end
-        else
-           lresp(ux) = 0; 
+%         % assign units resp 
+%         if
+%         ttest2(mean(tmpSpikeDist{1},1),mean(tmpSpikeDist{2},1))<p_thresh   % You lose a lot of statistical power by discarding the trials and doing a paired test between only bins!!!! imagine, 50 or so data points againt 12 :S         %
+%            if mean(mean(mean(tmpSpikeDist{2},1)-tmpSpikeDist{1},1))>0
+%                lresp(ux) = 1;
+%            else
+%                lresp(ux) = -1;
+%            end
+%         else
+%            lresp(ux) = 0; 
+%         end
+        nboot = 10000;
+        Sham = mean(tmpSpikeDist{1},2);
+        Laser = mean(tmpSpikeDist{2},2);
+        Delta = mean(Laser)-mean(Sham);
+        Aller = [Sham; Laser];
+        Sham_bst = NaN(size(Sham,1),1);
+        Laser_bst =  NaN(size(Laser,1),1);
+        Delta_bst = NaN(nboot,1);
+        for bst = 1:nboot
+            Idx = randperm(numel(Aller));
+            Sham_bst(:) = Aller(Idx(1:numel(Sham_bst)));
+            Laser_bst(:) =  Aller(Idx(numel(Sham_bst)+1:end));
+            Delta_bst(bst) = mean(Laser_bst)-mean(Sham_bst);
         end
-        
+        if Delta>0
+            p = 2.*mean(Delta_bst>Delta);
+            if p<p_thresh
+                lresp(ux) = 1;
+            end
+        elseif Delta<0
+            p = 2.*mean(Delta_bst<Delta);
+            if p<p_thresh
+                lresp(ux) = -1;
+            end
+        else
+            p = 1;
+            if p<p_thresh
+                lresp(ux) = 0;
+            end
+        end
+            
     end
     
     
 end
-breakpoint ='here';

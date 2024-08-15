@@ -1,5 +1,5 @@
 
-function [psth, trialspx, plotaxes] = mpsth_pj_x(spxtimes,trigtimes,varargin)
+function [psth, trialspx, plotaxes] = mpsth_az(spxtimes,trigtimes,varargin)
 % [psth trialspx] = mpsth(spxtimes,trigtimes,varargin)
 % function generates a peri-stimulus time histogram (psth) with time base in column 1 and histogram in column 2
 % in addition, function returns spike timestamps relative to trigger times
@@ -132,7 +132,8 @@ if chart==1
     %xlabel('peri-stimulus time'),ylabel([Firing Rate (Hz)'])
 elseif chart==2
     %     figure('name','peri-stimulus time histogram','units','normalized','position',[0.3 0.3 0.4 0.3])
-    plotaxes=subplot(m(1),n(1),p(1));
+%     plotaxes=subplot(m(1),n(1),p(1));
+    nexttile
     bar(psth(:,1)+binsz,psth(:,2),'k','BarWidth',1)
     hrespb=gca;
     o=gca();
@@ -149,7 +150,8 @@ elseif chart==2
     
     
     
-    subplot(m(2),n(2),p(2))
+%     subplot(m(2),n(2),p(2))
+    nexttile
     
     [rastmat, timevec] = mraster(trialspx,pre,post);
     %[lastmat, ~]       = mraster(triallx, pre, post);
