@@ -20,13 +20,14 @@ for sx = 1:numel(sids)
     events = d.events{1,sids(sx)};
         
     % Paradigm selection: determine what to look for
-    switch X
-        case {'exciteA','exciteA_sham'}
+    if strcmp(X,'exciteA')
         stimTrials = ismember([events.curr_trialtype],1:4);
         manip = [events(stimTrials).excite_or_not];
-        case {'exciteB','exciteB_Sham'}
+    elseif strcmp(X, 'exciteB')
         stimTrials = ismember([events.curr_trialtype],5:8);
         manip = [events(stimTrials).excite_or_not];
+    else
+        continue;
     end
 
 

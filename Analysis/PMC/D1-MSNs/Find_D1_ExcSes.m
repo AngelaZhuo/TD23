@@ -19,13 +19,14 @@ for ux = 1:numel(uids)
     events = d.events{d.map(unit)};
 
     % Paradigm selection: determine what to look for
-    switch X
-        case {'exciteA','exciteA_sham'}
-        stimTrials = ismember([events.curr_trialtype],1:4); %Take only A-trials
+    if strcmp(X,'exciteA')
+        stimTrials = ismember([events.curr_trialtype],1:4);
         manip = [events(stimTrials).excite_or_not];
-        case {'exciteB','exciteB_Sham'}
-        stimTrials = ismember([events.curr_trialtype],5:8);  %Take only B-trials  
+    elseif strcmp(X, 'exciteB')
+        stimTrials = ismember([events.curr_trialtype],5:8);
         manip = [events(stimTrials).excite_or_not];
+    else
+        continue;
     end
     
     pulses = d.laser{d.map(unit)}{1}; %OptRed LED timestamps 
@@ -91,6 +92,13 @@ end
 % 20ms following each pulse 
 % Across pulses and across units
 
+clearvars -except d uids
+
+PSTH_sham = [];
+PSTH_laser = [];
+TrialSpx_sham = [];
+TrialSpx_laser = [];
+
 for ux = 1:numel(uids)
 
     %Get spike, pulse and sham pulse time
@@ -100,13 +108,14 @@ for ux = 1:numel(uids)
     events = d.events{d.map(unit)};
 
     % Paradigm selection: determine what to look for
-    switch X
-        case {'exciteA','exciteA_sham'}
-        stimTrials = ismember([events.curr_trialtype],1:4); %Take only A-trials
+    if strcmp(X,'exciteA')
+        stimTrials = ismember([events.curr_trialtype],1:4);
         manip = [events(stimTrials).excite_or_not];
-        case {'exciteB','exciteB_Sham'}
-        stimTrials = ismember([events.curr_trialtype],5:8);  %Take only B-trials  
+    elseif strcmp(X, 'exciteB')
+        stimTrials = ismember([events.curr_trialtype],5:8);
         manip = [events(stimTrials).excite_or_not];
+    else
+        continue;
     end
     
     pulses = d.laser{d.map(unit)}{1}; %OptRed LED timestamps 
@@ -139,8 +148,81 @@ for ux = 1:numel(uids)
             pulse_trial = All_pulses_stim((trials(trx)-1)*10+1 : trials(trx)*10);
             pulse_time = [pulse_time;pulse_trial];
         end
-        [psth_sham, trialspx_sham] = mpsth_az(spikes,pulse_time,'pre', 0, 'post',20 , 'binsz',...
+        [psth{mx+1}, trialspx{mx+1}] = mpsth_az(spikes,pulse_time,'pre', 0, 'post',20 , 'binsz',...
             1, 'tb', 1, 'chart', 0,'fr',0);
     end
     
+    % Remove units with no spike in either sham or laser delays
+%     if sum(psth{1}(:,2))== 0 || sum(psth{2}(:,2)) == 0
+%         continue;
+%     end
+    
+    % Plot FR probability of each bin of one unit
+    unit_P_FR_sham = (psth{1}(:,2))/(numel(find(manip==0))*10)*100;
+    unit_P_FR_laser = (psth{2}(:,2))/(numel(find(manip==1))*10)*100;
+    
+%     figure('Position', [1, 1, 20, 10],'Units','centimeter')
+%     t = tiledlayout(1,2);
+%     
+%     nexttile
+%     bar(psth{1}(:,1)+1, unit_P_FR_sham,'k','BarWidth',1)
+%     title('sham')
+%     ylabel('Probability (%)','FontSize',8)
+%     xlabel('Bin (1ms)','FontSize',8)
+%     
+%     nexttile
+%     bar(psth{2}(:,1)+1, unit_P_FR_laser,'k','BarWidth',1)
+%     title('laser')
+%     ylabel('Probability (%)','FontSize',8)
+%     xlabel('Bin (1ms)','FontSize',8)
+%     
+%     sgtitle("P(spike)_perBin_Unit_" + unit,'Interpreter','none')
+%     linkaxes(t.Children(1:2))
+    
+%     saveas(gcf,"/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitInfo/d1_tag_prob/manip_pulse_P(spike)/P(spike)_Unit" + unit + ".png",'png')
+    
+    PSTH_sham = [PSTH_sham, psth{1}(:,2)];
+    PSTH_laser = [PSTH_laser, psth{2}(:,2)];
+    TrialSpx_sham = [TrialSpx_sham, trialspx{1}];
+    TrialSpx_laser = [TrialSpx_laser, trialspx{2}];
+
 end
+
+% Plot FR probability of each bin of all units
+P_FR_sham = sum(PSTH_sham,2)/(size(TrialSpx_sham,1)*size(TrialSpx_sham,2))*100;
+P_FR_laser = sum(PSTH_laser,2)/(size(TrialSpx_laser,1)*size(TrialSpx_laser,2))*100;
+
+figure('Position', [1, 1, 20, 10],'Units','centimeter')
+t = tiledlayout(1,2);
+
+nexttile
+bar(psth{1}(:,1)+1, P_FR_sham,'k','BarWidth',1)
+title('sham')
+ylabel('Probability (%)','FontSize',8)
+xlabel('Bin (1ms)','FontSize',8)
+
+nexttile
+bar(psth{2}(:,1)+1, P_FR_laser,'k','BarWidth',1)
+title('laser')
+ylabel('Probability (%)','FontSize',8)
+xlabel('Bin (1ms)','FontSize',8)
+
+
+sgtitle("P(spike)_perBin_AllUnits" ,'Interpreter','none')
+linkaxes(t.Children(1:2))
+
+saveas(gcf,"/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitInfo/d1_tag_prob/manip_pulse_P(spike)/P(spike)_AllUnits.png",'png')
+
+%% PSTH of the these units
+
+clearvars -except d uids
+
+tag = {d.info(d.map(uids)).tag};
+
+uids_exciteB = uids(strcmp(tag,'exciteB'));
+uids_exciteA = uids(strcmp(tag,'exciteA'));
+
+psf=PSTHfromiFR(d,iFR,uids_exciteB,TM,'manipulation',{0 1});
+psf1=PSTHfromiFR(d,iFR,uids_exciteA,TM,'manipulation',{0 1});
+
+saveas(psf1,"/zi-flstorage/data/Angela/DATA/TD23/Plots/UnitInfo/d1_tag_prob/PSTH_manip_pulse/iFR_PSTH_ExciteA.png",'png')
