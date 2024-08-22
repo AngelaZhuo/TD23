@@ -36,9 +36,9 @@ switch state_str
     case 'CS2'
         legstrs = {["C","D"],...
             ["A \rightarrow C","A \rightarrow D","B \rightarrow C","B \rightarrow D"]};
-        colorlabels = {{[1 0 1],[0.0745 0.6235  1.0000]},... % C, D
+        colorlabels = {{[0.5882 0.0118 .5882],[0 0 1]},... % C, D  
             {[1 0 1],[0.0745 0.6235 1.0000],[0.5882 0.0118 .5882],[0 0 1]},... % AC, AD, BC, BD
-            {[0.5882 0.0118 .5882],[0 0 1]}};  % C, D manipulation
+            {[1 0 1],[0.0745 0.6235  1.0000]}};  % C, D manipulation  
         trialcode = {[99 7 99; 99 8 99];... % C, D
             [5 7 99; 5 8 99; 6 7 99; 6 8 99]}; % AC, AD, BC, BD
         
@@ -46,10 +46,10 @@ switch state_str
         legstrs = {["R","N"],...
             ["C \rightarrow R","C \rightarrow N","D \rightarrow R","D \rightarrow N"],...
             ["AC1","AC0","AD1","AD0","BC1","BC0","BD1","BD0"]};
-        colorlabels = {{[0.9882    0.7922 0],[0.3373    0.7216    0.0667]},... % R, N
+        colorlabels = {{[0.9804    0.3843    0.1255],[0.0039    0.3216    0.0863]},... % R, N  
             {[0.9882    0.7922 0],[0.3373    0.7216    0.0667],[0.9804    0.3843    0.1255],[0.0039    0.3216    0.0863]},... % CR, CN, DR, DN
             {'m','b','r','g','y','c',[.5 .6 .7],[.8 .2 .6]},... %  AC1, AC0, AD1, AD0, BC1, BC0, BD1,BD0
-            {[0.9804    0.3843    0.1255],[0.0039    0.3216    0.0863]}};% R, N manipulation
+            {[0.9882    0.7922 0],[0.3373    0.7216    0.0667]}};% R, N manipulation
         trialcode = {[99 99 1; 99 99 0];... % R, N
             [99 7 1; 99 7 0; 99 8 1; 99 8 0];... % CR, CN, DR, DN
             [5 7 1; 5 7 0; 5 8 1; 5 8 0; 6 7 1; 6 7 0; 5 8 1; 5 8 0]}; %  AC1, AC0, AD1, AD0, BC1, BC0, BD1,BD0
@@ -67,29 +67,29 @@ else
 end
 
 if numel(manipCode) ==1
-if strcmp(para,'exciteA')
-    if any(ismember(code(:),5))
-        bTr =any(ismember(code,[6 10]),2);
-        code(bTr,:) = [];
-        cmp(bTr) = [];
-        lstr(bTr) = [];
-    else
-        for sx=1:numel(cmp)
-            code(sx,1)=5;
-            lstr(sx) = "A \rightarrow " + lstr(sx);
+    if ismember(para,{'exciteA' 'exciteA_sham'})
+        if any(ismember(code(:),5))
+            bTr =any(ismember(code,[6 10]),2);
+            code(bTr,:) = [];
+            cmp(bTr) = [];
+            lstr(bTr) = [];
+        else
+            for sx=1:numel(cmp)
+                code(sx,1)=5;
+                lstr(sx) = "A \rightarrow " + lstr(sx);
+            end
+        end
+    elseif ismember(para,{'exciteB' 'exciteB_sham'})
+        if any(ismember(code(:),[6 10]))
+            aTr =any(ismember(code,5),2);
+            code(aTr,:)=[];
+            cmp(aTr) = [];
+            lstr(aTr)=[];
+        else
+            for sx=1:numel(cmp)
+                code(sx,1)=6;
+                lstr(sx) = "B \rightarrow " + lstr(sx);
+            end
         end
     end
-elseif strcmp(para,'exciteB')
-    if any(ismember(code(:),[6 10]))
-        aTr =any(ismember(code,5),2);
-        code(aTr,:)=[];
-        cmp(aTr) = [];
-        lstr(aTr)=[];
-    else
-        for sx=1:numel(cmp)
-            code(sx,1)=6;
-            lstr(sx) = "B \rightarrow " + lstr(sx);
-        end
-    end
-end
 end

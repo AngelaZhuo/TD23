@@ -43,7 +43,7 @@ for s = 1:41  %loop over tag_ncount
     Matrices.(Regions{teil}).events = Events;
     uu = 0;
     for u = Sesser{s} %loop over all animal-day sessions
-        Adder = [convertCharsToStrings(PVsmall.info(u).animal) + "_" + s, convertCharsToStrings(PVsmall.info(u).animal), s, u];
+        Adder = [convertCharsToStrings(PVsmall.info(u).animal) + "_" + s, convertCharsToStrings(PVsmall.info(u).animal), s, u, PVsmall.info(u).tag];
         pump = PVsmall.info(u).pump;
     %     diam = PVsmall.pupil(u).raw_trace;
         diam = PVsmall.pupil(u).aligned_trace;
@@ -100,16 +100,14 @@ for s = 1:41  %loop over tag_ncount
         
         Matrices.(Regions{teil}).mouse(uu, 1) = string(PVsmall.info(u).animal);
         % Create trial matrix;
-        TM_ = NaN(1, 3, Trials);
+        TM_ = NaN(1, 4, Trials);
         CS1 = [Session.curr_odorcue_odor_num];
         CS2 = [Session.curr_rewardcue_odor_num];
         US = [Session.drop_or_not];
         if ismember(u,111:330)
-            inhibit_or_not = Session.inhibit_or_not;
-            TM_(1,4,:)= inhibit_or_not;
+            TM_(1,4,:) = [Session.inhibit_or_not];
         elseif ismember(u,331:430)
-            excite_or_not = Session.excite_or_not;
-            TM_(1,4,:) = excite_or_not;
+            TM_(1,4,:) = [Session.excite_or_not];
         else
             TM_(1,4,:) = nan(size(CS1));
         end
@@ -137,7 +135,7 @@ TM(TM==10) = 6;
 
 
 size(Pupil)
-% save("/zi-flstorage/data/Angela/DATA/TD23/Matrices/M_TM_Events_Pupil.mat", "Pupil", "TM", "Events","Namer","Pump")
+save("/zi-flstorage/data/Angela/DATA/TD23/Matrices/M_TM_Events_Pupil.mat", "Pupil", "TM", "Events","Namer","Pump")
 
 %% Clean the Pupil
 %modified from CleanSession_Loop.m in TD22

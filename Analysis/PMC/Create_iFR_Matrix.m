@@ -1,4 +1,7 @@
-% load(Cache + "/d_09_Apr_2024.mat") % it is 10GB so it takes a while
+%load(Cache + "/d_09_Apr_2024.mat") % it is 10GB so it takes a while
+clearvars -except Cache
+load("/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS2/d_KS2_31-Jul-2024.mat")
+d = d_KS2;
 
 for u = 1:numel(d.clust_params)
     d.clust_params(u).session = convertCharsToStrings(d.clust_params(u).session);
@@ -23,7 +26,7 @@ for s = 1:numel(d.info)
     disSM = d.spikes(Uner);
     disMean = [disd.mean_fr]';
     Runer = [disd.region_coding]';
-    Funcdan = ([disd.funcDAN_odorcue] + [disd.funcDAN_reward] + [disd.funcDAN_rewardcue])'>0;
+    %Funcdan = ([disd.funcDAN_odorcue] + [disd.funcDAN_reward] + [disd.funcDAN_rewardcue])'>0;
 
     Nanner = ~ismember(Runer, [1, 2, 3]);
     Nanner = Nanner | ([disd.mean_fr]'<1);
@@ -115,7 +118,7 @@ Units.s = double(Units.s);
 %% Create iFR_Angela_TD23
 iFR = NaN(size(Units,1), 128, 150); % 15.8 seconds
 
-Kernel = 3000 % 300ms
+Kernel = 3000; % 300ms
 pd = makedist('HalfNormal','mu',0,'sigma',Kernel);
 pdf1 = pdf(pd, 0:Kernel.*6);
 Sample = 1000; % 1000ms
