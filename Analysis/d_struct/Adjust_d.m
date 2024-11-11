@@ -1,7 +1,7 @@
 %% Adjust ChannelMapAZ and d.clust_params according to histology
 %20240323
 %Only modify the d.clust_params for the learned animals: x04, x07-x10
-%Changed the region for useless tetrodes to 99
+%Changed the region for useless tetrodes to 99; Changed some NAc terodes to Tu 
 %antshift(in VS, 0 is post, 1 is ant; in VTA, 0 is inside the region, 1 is outside; 99 is for tetrodes with no units)
 %medlat(in VS, 1 is medial, 2 is lateral; in VTA, all is 0; 99 is for tetrodes with no units)
 
@@ -11,9 +11,11 @@ load ('/home/yi.zhuo/Documents/Github/KS3_Pipeline/TD23/ChannelMapAZ.mat')
 %Tetrodes to be removed: x04 (20, 33); x07(18, 36); x08(6, 16, 17, 18, 24, 26, 29, 32)
 %x09(17, 19);x10(21, 24, 26, 29, 30)
 
-%x04 - all NAc tetrodes are post; all Tu tetrodes are ant; all VTA tetrodes are out  
-ChannelMapAZ.x04.antshift(1:16) = 0;
-ChannelMapAZ.x04.antshift(17:48) = 1;
+%x04 - all NAc tetrodes are post; all Tu tetrodes are ant; there are pDAN units in VTA, changed antshift for VTA from 1 to 0 
+% ChannelMapAZ.x04.antshift(1:16) = 0;
+ChannelMapAZ.x04.antshift(1:16,33:48) = 0;
+% ChannelMapAZ.x04.antshift(17:48) = 1;
+ChannelMapAZ.x04.antshift(17:32) = 1;
 ChannelMapAZ.x04.antshift([20,33]) = 99;
 ChannelMapAZ.x04.medlat([4:6,9,10,14:19,23,24,27:29]) = 2; %lateral
 ChannelMapAZ.x04.medlat([1:3,7,8,11:13,21:22,25,26,30:32])=1; %medial
@@ -21,7 +23,7 @@ ChannelMapAZ.x04.medlat(33:48)=0; %VTA
 ChannelMapAZ.x04.medlat([20,33])=99;
 ChannelMapAZ.x04.region([20,33])=99;
 
-%x07 - all Tu tetrodes are ant
+%x07 - all Tu tetrodes are ant; ant NAc are Tu
 ChannelMapAZ.x07.antshift([9:16,33:48]) = 0;
 ChannelMapAZ.x07.antshift([1:8,17:32]) = 1;
 ChannelMapAZ.x07.antshift([18,36]) = 99;
@@ -29,10 +31,11 @@ ChannelMapAZ.x07.medlat([4:6,9,10,14:19,23,24,27:29]) = 2;
 ChannelMapAZ.x07.medlat([1:3,7,8,11:13,20:22,25,26,30:32]) = 1;
 ChannelMapAZ.x07.medlat(33:48)=0; %VTA
 ChannelMapAZ.x07.medlat([18,36]) = 99;
+ChannelMapAZ.x07.region(1:8)=2;
 ChannelMapAZ.x07.region([18,36])=99;
 
 
-%x08 - all NAc/Tu tetrodes are ant
+%x08 - Most NAc/Tu tetrodes are ant
 ChannelMapAZ.x08.antshift(1:32) = 1;
 ChannelMapAZ.x08.antshift(33:48) = 0;
 ChannelMapAZ.x08.antshift([6,16:18,24,26,29,32]) = 99;
@@ -43,7 +46,7 @@ ChannelMapAZ.x08.medlat(33:48)=0; %VTA
 ChannelMapAZ.x08.region([6,16:18,24,26,29,32]) = 99;
 
 
-%x09 - All NAc tetrodes are post, all OT tetrodes are ant
+%x09 - Most NAc tetrodes are post, most OT tetrodes are ant
 ChannelMapAZ.x09.antshift([1:16,33:48])=0;
 ChannelMapAZ.x09.antshift(17:32)=1;
 ChannelMapAZ.x09.antshift([17,19])=99;
@@ -54,9 +57,11 @@ ChannelMapAZ.x09.medlat([17,19])=99;
 ChannelMapAZ.x09.region([17,19])=99;
 
 
-%x10 - all VTA tetrodes are out  
-ChannelMapAZ.x10.antshift([9,10,11:16,23,24,27:32])=0;
-ChannelMapAZ.x10.antshift([1:8,17:22,25,26,33:48])=1;
+%x10 - there are pDAN units in VTA, changed antshift for VTA from 1 to 0 
+% ChannelMapAZ.x10.antshift([9,10,11:16,23,24,27:32])=0;
+ChannelMapAZ.x10.antshift([9:16,23,24,27:48])=0;
+% ChannelMapAZ.x10.antshift([1:8,17:22,25,26,33:48])=1;
+ChannelMapAZ.x10.antshift([1:8,17:22,25,26])=1;
 ChannelMapAZ.x10.antshift([21,24,26,29,30])=99;
 ChannelMapAZ.x10.medlat([4:6,9,10,14:19,23,24,27:29])=2;
 ChannelMapAZ.x10.medlat([1:3,7,8,11:13,20:22,25,26,30:32])=1;
@@ -69,25 +74,25 @@ save ('/home/yi.zhuo/Documents/Github/KS3_Pipeline/TD23/ChannelMapAZ.mat','Chann
 
 
 %% Loop over d.clust_params to fill in the info
-%20240324
+%20240828
 
-load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_15-Mar-2024.mat')
-load ('/home/yi.zhuo/Documents/Github/KS3_Pipeline/TD23/ChannelMapAZ.mat')
+% load ('/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_28-Aug-2024.mat')
+% load ('/home/yi.zhuo/Documents/Github/KS3_Pipeline/TD23/ChannelMapAZ.mat')
 
 clearvars -except d ChannelMapAZ
 
-animals = ["x0" + string([4,7:9]),"x10"];
+animals = ["x0" + string(1:9),"x10"];
 
 [d.clust_params.medlat] = deal(nan);  %set all the values to NaN
 [d.clust_params.antshift] = deal(nan);
-units_of_interest = find(contains({d.clust_params.animal},animals));
+% units_of_interest = find(contains({d.clust_params.animal},animals));
 
-for un = 1:numel(units_of_interest)
-    unid = units_of_interest(un);
-    ax = find(strcmp(d.clust_params(unid).animal,animals));
-    d.clust_params(unid).region_coding = ChannelMapAZ.(animals(ax)).region(d.clust_params(unid).tetrode);
-    d.clust_params(unid).antshift = ChannelMapAZ.(animals(ax)).antshift(d.clust_params(unid).tetrode);
-    d.clust_params(unid).medlat = ChannelMapAZ.(animals(ax)).medlat(d.clust_params(unid).tetrode);
+for un = 1:numel(d.clust_params)
+%     unid = units_of_interest(un);
+    ax = find(strcmp(d.clust_params(un).animal,animals));
+    d.clust_params(un).region_coding = ChannelMapAZ.(animals(ax)).region(d.clust_params(un).tetrode);
+    d.clust_params(un).antshift = ChannelMapAZ.(animals(ax)).antshift(d.clust_params(un).tetrode);
+    d.clust_params(un).medlat = ChannelMapAZ.(animals(ax)).medlat(d.clust_params(un).tetrode);
 end
 
 
@@ -175,3 +180,60 @@ for ux = 1:numel(d.clust_params)
     d.clust_params(ux).tag = d.info(d.map(ux)).tag;
     
 end
+
+%% Adjust ChannelMapAZ and d.clust_params according to histology
+%20240823
+%Modify the d.clust_params for the remaining animals(bad learners): x01-x03,x05,x06
+%Changed the region for useless tetrodes to 99; Changed some NAc terodes to Tu 
+%antshift - (in VS, 0 is post, 1 is ant; in VTA, 0 is inside the region, 1 is outside; 99 is for tetrodes with no units)
+%medlat(in VS, 1 is medial, 2 is lateral; in VTA, all is 0; 99 is for tetrodes with no units)
+
+
+load ('/home/yi.zhuo/Documents/Github/KS3_Pipeline/TD23/ChannelMapAZ.mat')
+
+%Tetrodes to be removed:  x02 (1:16, 18, 19, 20, 22, 29); x03(18, 24, 28, 31); x05(30, 33, 36, 39) 
+
+%x01 - Undefined AP, ML for VS and VTA has pDAN units
+ChannelMapAZ.x01.antshift(1:32) = NaN;
+ChannelMapAZ.x01.medlat(1:32) = NaN;
+ChannelMapAZ.x01.medlat(33:48) = 0;
+ChannelMapAZ.x01.antshift(33:48) = 0;
+
+%x02 - Most NAc are out; Tu are all lateral and anterior; VTA has pDAN units
+ChannelMapAZ.x02.medlat(17:32) = 2;
+ChannelMapAZ.x02.antshift(17:32) = 1;
+ChannelMapAZ.x02.medlat(33:48) = 0;
+ChannelMapAZ.x02.antshift(33:48) = 0;
+ChannelMapAZ.x02.antshift([1:16,18, 19, 20, 22, 29]) = 99;
+ChannelMapAZ.x02.medlat([1:16, 18, 19, 20, 22, 29]) = 99;
+ChannelMapAZ.x02.region([1:16, 18, 19, 20, 22, 29]) = 99;
+
+%x03 - NAc are all in the Tu; Undefined AP, ML for Tu; VTA has pDAN units
+ChannelMapAZ.x03.antshift([9:16,33:48]) = 0;
+ChannelMapAZ.x03.antshift(1:8) = 1;
+ChannelMapAZ.x01.antshift(17:32) = NaN;
+ChannelMapAZ.x01.medlat(17:32) = NaN;
+ChannelMapAZ.x03.medlat([1:3,7,8,11:13]) = 1;
+ChannelMapAZ.x03.medlat([4:6,9:10,14:16]) = 2;
+ChannelMapAZ.x03.medlat(33:48) = 0; %VTA
+ChannelMapAZ.x03.region(1:16) = 2;
+ChannelMapAZ.x03.antshift([18, 24, 28, 31]) = 99;
+ChannelMapAZ.x03.medlat([18, 24, 28, 31]) = 99;
+ChannelMapAZ.x03.region([18, 24, 28, 31]) = 99;
+
+%x05 - all NAc and Tu tetrodes are lat; most Tu tetrodes are ant; VTA has pDAN units
+ChannelMapAZ.x05.antshift([1:8,17:32]) = 1;
+ChannelMapAZ.x05.antshift(9:16) = 1;
+ChannelMapAZ.x05.antshift(33:48) = 0;
+ChannelMapAZ.x05.medlat(1:32) = 2;
+ChannelMapAZ.x05.medlat(33:48) = 0;
+ChannelMapAZ.x05.antshift([30, 33, 36, 39]) = 99;
+ChannelMapAZ.x05.medlat([30, 33, 36, 39]) = 99;
+ChannelMapAZ.x05.region([30, 33, 36, 39]) = 99;
+
+%x06 - all NAc tetrodes are lat; all Tu is ant; VTA has pDAN units
+ChannelMapAZ.x06.antshift([1:8,17:32]) = 1;
+ChannelMapAZ.x06.antshift([9:16,33:48]) = 0;
+ChannelMapAZ.x06.medlat([20:22,25,26,30:32]) = 1;
+ChannelMapAZ.x06.medlat([1:19,23,24,27:29]) = 2;
+ChannelMapAZ.x06.medlat(33:48) = 0;
