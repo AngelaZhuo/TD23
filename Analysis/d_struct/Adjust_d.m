@@ -13,7 +13,7 @@ load ('/home/yi.zhuo/Documents/Github/KS3_Pipeline/TD23/ChannelMapAZ.mat')
 
 %x04 - all NAc tetrodes are post; all Tu tetrodes are ant; there are pDAN units in VTA, changed antshift for VTA from 1 to 0 
 % ChannelMapAZ.x04.antshift(1:16) = 0;
-ChannelMapAZ.x04.antshift(1:16,33:48) = 0;
+ChannelMapAZ.x04.antshift([1:16,33:48]) = 0;
 % ChannelMapAZ.x04.antshift(17:48) = 1;
 ChannelMapAZ.x04.antshift(17:32) = 1;
 ChannelMapAZ.x04.antshift([20,33]) = 99;
@@ -96,7 +96,7 @@ for un = 1:numel(d.clust_params)
 end
 
 
-save (['/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/d_' date '.mat'],'d','-v7.3')
+save (['/zi-flstorage/data/Angela/DATA/TD23/D-struct/KS3/PMC/d_' date '.mat'],'d','-v7.3')
 
 
 %sanity check
@@ -189,7 +189,7 @@ end
 %medlat(in VS, 1 is medial, 2 is lateral; in VTA, all is 0; 99 is for tetrodes with no units)
 
 
-load ('/home/yi.zhuo/Documents/Github/KS3_Pipeline/TD23/ChannelMapAZ.mat')
+% load ('/home/yi.zhuo/Documents/Github/KS3_Pipeline/TD23/ChannelMapAZ.mat')
 
 %Tetrodes to be removed:  x02 (1:16, 18, 19, 20, 22, 29); x03(18, 24, 28, 31); x05(30, 33, 36, 39) 
 
@@ -211,8 +211,8 @@ ChannelMapAZ.x02.region([1:16, 18, 19, 20, 22, 29]) = 99;
 %x03 - NAc are all in the Tu; Undefined AP, ML for Tu; VTA has pDAN units
 ChannelMapAZ.x03.antshift([9:16,33:48]) = 0;
 ChannelMapAZ.x03.antshift(1:8) = 1;
-ChannelMapAZ.x01.antshift(17:32) = NaN;
-ChannelMapAZ.x01.medlat(17:32) = NaN;
+ChannelMapAZ.x03.antshift(17:32) = NaN;
+ChannelMapAZ.x03.medlat(17:32) = NaN;
 ChannelMapAZ.x03.medlat([1:3,7,8,11:13]) = 1;
 ChannelMapAZ.x03.medlat([4:6,9:10,14:16]) = 2;
 ChannelMapAZ.x03.medlat(33:48) = 0; %VTA
@@ -223,7 +223,7 @@ ChannelMapAZ.x03.region([18, 24, 28, 31]) = 99;
 
 %x05 - all NAc and Tu tetrodes are lat; most Tu tetrodes are ant; VTA has pDAN units
 ChannelMapAZ.x05.antshift([1:8,17:32]) = 1;
-ChannelMapAZ.x05.antshift(9:16) = 1;
+ChannelMapAZ.x05.antshift(9:16) = 0;
 ChannelMapAZ.x05.antshift(33:48) = 0;
 ChannelMapAZ.x05.medlat(1:32) = 2;
 ChannelMapAZ.x05.medlat(33:48) = 0;
