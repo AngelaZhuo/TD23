@@ -86,7 +86,7 @@ for xx = 5:numel(X)  %First focus on the excitation sessions
         text(.5,1,string(curr_tag)+" "+utypes+ string(titleStr),'FontSize',7,'FontWeight','bold','Interpreter','none','HorizontalAlignment','center')
         cf.Position =cf.Position+[0 0 0 .5];
         cf.Children = cf.Children([2:end 1]);
-
+        
         %save the plot in saveDir
         exportgraphics(cf,saveDir+string(curr_tag)+"_"+string(d.clust_params(curUnit).animal)+"_Unit"+string(curUnit)+".png",'Resolution',300)
         

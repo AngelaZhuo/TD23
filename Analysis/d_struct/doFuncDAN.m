@@ -1,5 +1,6 @@
 function d = doFuncDAN(d)
-c = FunctionalDANs_TD19(d,[],1:numel(d.spikes));
+% c = FunctionalDANs_TD19(d,[],1:numel(d.spikes));
+c = FunctionalDANs_TD23social(d,[],1:numel(d.spikes));
 if isempty(c)
     return
 end
