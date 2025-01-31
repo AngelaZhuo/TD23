@@ -21,6 +21,7 @@ end
 % prepare timebase
 time_base = -ops.pre:ops.binsize:ops.post;
 time_base(end) = [];
+time_base = round(time_base,10); %Fix floating-point problem
 
 % get number of conditions
 trialmatrix = d.events{1,1};
@@ -40,7 +41,7 @@ for ii=1:numel(unit_maps)
     
     % trialtimes for the session of this unit
     events = d.events{1,d.map(unit_maps(ii))};
-    odor_num = unique([events.case_num]);
+    % odor_num = unique([events.case_num]);
     
     for cond = 1:size(condition_cell,2)   
         % get zscore for this unit and condition

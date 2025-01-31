@@ -27,6 +27,7 @@ end
 % prepare timebase
 time_base = -ops.pre:ops.binsize:ops.post;
 time_base(end) = [];
+time_base = round(time_base,10); %Fix floating-point problem
 
 % get number of conditions
 trialmatrix = d.events{1,1};

@@ -1,6 +1,6 @@
 function f = plot_PSTH_familiarity_TD23(spxtimes,trialtimes,case_num,varargin)
 %%
-%
+%individual unit PSTH and raster plot
 %
 %% Set defaults
 pre     = 1000;
